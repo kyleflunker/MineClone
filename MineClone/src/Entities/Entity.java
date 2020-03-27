@@ -11,6 +11,7 @@ public class Entity {
 	float scale;
 	
 	TexturedModel model;
+	
 	public Entity(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
 		
 		this.model = model;
@@ -20,6 +21,7 @@ public class Entity {
 		this.rotZ = rotZ;
 		this.scale = scale;
 	}
+		
 	
 	public Vector3f getPosition() {
 		return position;

@@ -9,7 +9,7 @@ import RenderEngine.Loader;
 
 public class GeneratedBlocks {
 	
-	public static float[] block_vertices = {
+	public static float[] all_sides_block_vertices = {
 			
 			-0.5f,0.5f,-0.5f,	
 			-0.5f,-0.5f,-0.5f,	
@@ -42,7 +42,7 @@ public class GeneratedBlocks {
 			0.5f,-0.5f,0.5f
 	};
 	
-	public static int[] block_indices = {
+	public static int[] all_sides_block_indices = {
 			0,1,3,	
 			3,1,2,	
 			4,5,7,
@@ -57,7 +57,7 @@ public class GeneratedBlocks {
 			23,21,22
 	};
 	
-	public static float[] block_uv = {
+	public static float[] all_sides_block_uv = {
 		
 			0, 0,
 			0, 1,
@@ -83,6 +83,97 @@ public class GeneratedBlocks {
 			0, 1,
 			1, 1,
 			1, 0
+			
+	};
+	
+public static float[] side_block_vertices = {			
+				
+			
+			-0.5f,0.5f,0.5f,	
+			-0.5f,-0.5f,0.5f,	
+			0.5f,-0.5f,0.5f,	
+			0.5f,0.5f,0.5f,
+			
+			0.5f,0.5f,-0.5f,	
+			0.5f,-0.5f,-0.5f,	
+			0.5f,-0.5f,0.5f,	
+			0.5f,0.5f,0.5f,
+			
+			-0.5f,0.5f,-0.5f,	
+			-0.5f,-0.5f,-0.5f,	
+			-0.5f,-0.5f,0.5f,	
+			-0.5f,0.5f,0.5f,
+			
+			-0.5f,0.5f,-0.5f,	
+			-0.5f,-0.5f,-0.5f,	
+			0.5f,-0.5f,-0.5f,	
+			0.5f,0.5f,-0.5f,	
+			
+			
+	};
+	
+	public static int[] side_block_indices = {
+			0,1,3,	
+			3,1,2,	
+			4,5,7,
+			7,5,6,
+			8,9,11,
+			11,9,10,
+			12,13,15,
+			15,13,14,	
+			
+	};
+	
+	public static float[] side_block_uv = {
+		
+			0, 0,
+			0, 1,
+			1, 1,
+			1, 0,
+			0, 0,
+			0, 1,
+			1, 1,
+			1, 0,
+			0, 0,
+			0, 1,
+			1, 1,
+			1, 0,
+			0, 0,
+			0, 1,
+			1, 1,
+			1, 0,			
+			
+	};
+	
+	public static float[] top_side_block_vertices = {
+		-0.5f,0.5f,0.5f,
+		-0.5f,0.5f,-0.5f,
+		0.5f,0.5f,-0.5f,
+		0.5f,0.5f,0.5f,
+		
+			
+	};
+	
+	public static float[] bottom_side_block_vertices = {
+			-0.5f,-0.5f,0.5f,
+			-0.5f,-0.5f,-0.5f,
+			0.5f,-0.5f,-0.5f,
+			0.5f,-0.5f,0.5f			
+				
+		};
+	
+	public static int[] single_side_block_indices = {
+			0,1,3,	
+			3,1,2,				
+			
+	};
+	
+	public static float[] single_side_block_uv = {
+		
+			0, 0,
+			0, 1,
+			1, 1,
+			1, 0,				
 			
 	};
 	

@@ -15,7 +15,7 @@ public class DirtBlock extends GeneratedBlocks {
 
 	public DirtBlock(Loader loader, Vector3f position) {
 		super(loader, position);
-			RawModel model = loader.loadToVAO(GeneratedBlocks.block_vertices, GeneratedBlocks.block_indices, GeneratedBlocks.block_uv);
+			RawModel model = loader.loadToVAO(all_sides_block_vertices, all_sides_block_indices, all_sides_block_uv);
 			ModelTexture texture = new ModelTexture(loader.loadTexture(textureString));
 			TexturedModel texModel = new TexturedModel(model, texture);
 			generated_blocks.add(new Entity(texModel, position, 0, 0, 0, 1));

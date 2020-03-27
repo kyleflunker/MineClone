@@ -3,6 +3,7 @@ package MineClone;
 import org.lwjgl.util.vector.Vector3f;
 
 import Blocks.DirtBlock;
+import Blocks.GrassBlock;
 import Blocks.StoneBlock;
 import RenderEngine.Loader;
 import Tools.Noise;
@@ -18,11 +19,11 @@ public class WorldGeneration {
 				
 				float zVal = height.generateHeight(i, j);
 				        
-				new DirtBlock(loader, new Vector3f(i, zVal , j));
+				new GrassBlock(loader, new Vector3f(i, zVal , j));
 				
-				for(float k = zVal - 1; k > 0; k--) {
-				   new StoneBlock(loader, new Vector3f(i, k , j));	
-				}
+				//for(float k = zVal - 1; k > 0; k--) {
+				   //new StoneBlock(loader, new Vector3f(i, k , j));	
+				//}
 						
 					
 				
