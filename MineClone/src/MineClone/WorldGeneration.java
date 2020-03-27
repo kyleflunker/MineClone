@@ -11,7 +11,7 @@ public class WorldGeneration {
 		
 	public static void generateWorld(Loader loader, int worldSize, int worldDepth) {
 		
-		Noise height = new Noise(worldSize, worldDepth, 20, 1111);
+		Noise height = new Noise(worldSize, worldDepth, 20, 1000);
 		
 		for(int i = 0; i < worldSize; i++) {
 			for(int j = 0; j < worldSize; j++) {
