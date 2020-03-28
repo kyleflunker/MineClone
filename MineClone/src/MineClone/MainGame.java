@@ -3,6 +3,7 @@ package MineClone;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
+import Blocks.Chunk;
 import Blocks.GeneratedBlocks;
 import Entities.Camera;
 import Entities.Entity;
@@ -37,8 +38,10 @@ public class MainGame {
 			shader.start();
 			shader.loadViewMatrix(camera);
 			
-			for (Entity entity : GeneratedBlocks.generated_blocks) {
-				renderer.render(entity, shader);
+			for (Chunk chunks : WorldGeneration.getGeneratedChunks()) {				
+				for(Entity entity : chunks.getChunk_blocks()) {
+					renderer.render(entity, shader);
+				}				
 			}
 			
 			shader.stop();

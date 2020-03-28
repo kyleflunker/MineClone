@@ -177,13 +177,13 @@ public static float[] side_block_vertices = {
 			
 	};
 	
-	
-	public static ArrayList<Entity> generated_blocks = new ArrayList<Entity>();	
 	private Loader loader;	
 	private Vector3f position;
+	private Chunk chunk;
 	
-	public GeneratedBlocks(Loader loader, Vector3f position) {
+	public GeneratedBlocks(Loader loader, Chunk chunk, Vector3f position) {
 		this.loader = loader;
+		this.chunk = chunk;
 		this.position = position;
 	}
 	
