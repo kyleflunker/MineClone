@@ -10,8 +10,7 @@ import Textures.ModelTexture;
 
 public class DirtBlock extends GeneratedBlocks {
 	
-	private String textureString = "dirtTex";
-	
+	private String textureString = "dirtTex";		
 	
 
 	public DirtBlock(Loader loader, Chunk chunk, Vector3f position) {
@@ -19,7 +18,7 @@ public class DirtBlock extends GeneratedBlocks {
 			RawModel model = loader.loadToVAO(all_sides_block_vertices, all_sides_block_indices, all_sides_block_uv);
 			ModelTexture texture = new ModelTexture(loader.loadTexture(textureString));
 			TexturedModel texModel = new TexturedModel(model, texture);
-			chunk.addTo_chunk_blocks(new Entity(texModel, position, 0, 0, 0, 1));
+			chunk.addTo_chunk_blocks(new Entity(texModel, position, 0, 0, 0, 1, allFaces));
 		}
 		
 }

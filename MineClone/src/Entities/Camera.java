@@ -4,9 +4,13 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
+import Blocks.Chunk;
+
 public class Camera {
 	
-	Vector3f position;
+	static Vector3f position;
+	static Vector3f chunkPosition = new Vector3f(0, 0, 0);
+	static boolean playerInNewChunk = true;
 	float rotX;
 	float rotY;
 	float rotZ;
@@ -44,10 +48,14 @@ public class Camera {
 		position.y += dy;
 		position.z += dz;
 		
+		testIfPlayerIsInNewChunk();
+		
+		//System.out.println(getPosition().toString());
+		
 		
 	}
 
-	public Vector3f getPosition() {
+	public static Vector3f getPosition() {
 		return position;
 	}
 
@@ -61,6 +69,25 @@ public class Camera {
 
 	public float getRotZ() {
 		return rotZ;
+	}
+	
+	public void testIfPlayerIsInNewChunk() {
+		if((Math.abs((position.x - chunkPosition.x)) >= Chunk.chunkSize) || (Math.abs((position.z - chunkPosition.z)) >= Chunk.chunkSize)) {
+			playerInNewChunk = true;
+			
+			chunkPosition = new Vector3f(position.x, position.y, position.z);			
+		}
+	}
+	
+	public static boolean isPlayerInNewChunk() {
+		if(playerInNewChunk) {
+		   System.out.println("Player is in new chunk.");	
+		   playerInNewChunk = false;	
+		   return true;
+		} else {
+		   return false;
+		}
+		
 	}
 	
 

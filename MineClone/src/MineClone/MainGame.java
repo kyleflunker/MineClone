@@ -28,7 +28,7 @@ public class MainGame {
 		MasterRenderer renderer = new MasterRenderer(shader);
 		
 		
-		WorldGeneration.generateWorld(loader, 50, 5);
+		WorldGeneration.setLoader(loader);
 		Camera camera = new Camera(new Vector3f(0, 0, 0), 0 ,0, 0);
 		
 		while(!Display.isCloseRequested()) {
@@ -38,11 +38,15 @@ public class MainGame {
 			shader.start();
 			shader.loadViewMatrix(camera);
 			
-			for (Chunk chunks : WorldGeneration.getGeneratedChunks()) {				
-				for(Entity entity : chunks.getChunk_blocks()) {
-					renderer.render(entity, shader);
+			
+			for (Chunk chunks : WorldGeneration.getRenderedChunks()) {					
+				for(Entity entity : chunks.getRendered_blocks()) {
+					renderer.render(entity, shader);					
 				}				
 			}
+			
+			
+			WorldGeneration.chunkController();
 			
 			shader.stop();
 			DisplayManager.updateDisplay();

@@ -9,10 +9,11 @@ public class Entity {
 	Vector3f position;
 	float rotX, rotY, rotZ;
 	float scale;
+	String EntityType;
 	
 	TexturedModel model;
 	
-	public Entity(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+	public Entity(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale, String EntityType) {
 		
 		this.model = model;
 		this.position = position;
@@ -20,12 +21,18 @@ public class Entity {
 		this.rotY = rotY;
 		this.rotZ = rotZ;
 		this.scale = scale;
+		this.EntityType = EntityType;
 	}
 		
 	
 	public Vector3f getPosition() {
 		return position;
 	}
+	
+	public String getEntityType() {
+		return EntityType;
+	}	
+	
 	
 	public void increasePosition(float dx, float dy, float dz) {
 		this.position.x += dx;

@@ -9,6 +9,12 @@ import RenderEngine.Loader;
 
 public class GeneratedBlocks {
 	
+	//block Entity Types
+	final public String topFace = "top";
+	final public String bottomFace = "bottom";
+	final public String sideFaces = "sides";
+	final public String allFaces = "solid";
+	
 	public static float[] all_sides_block_vertices = {
 			
 			-0.5f,0.5f,-0.5f,	
