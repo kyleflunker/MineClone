@@ -1,5 +1,7 @@
 package MineClone;
 
+import java.io.IOException;
+
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -18,7 +20,7 @@ public class MainGame {
 	public static Loader loader1 = null;
 	public static StaticShader shader1 = null;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		DisplayManager.createDisplay();	
 				
 		Loader loader = new Loader();
