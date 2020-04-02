@@ -29,12 +29,12 @@ public class WorldGeneration {
 		Vector3f positionVector = Camera.getPosition();
 		int posX = (int) Math.floor(Camera.getPosition().x / 10) * 10;
 		int posZ = (int) Math.floor(Camera.getPosition().z / 10) * 10;		
-		int renderDistance = 20;
+		int renderDistance = 10;
 		
 		if(Camera.isPlayerInNewChunk()) {
 		   renderedChunks.clear();
-		   for(int i = posX; i <= posX + renderDistance; i += 10) {
-			   for(int j = posZ; j <= posZ + renderDistance; j += 10) {
+		   for(int i = posX - renderDistance; i <= posX + renderDistance; i += 10) {
+			   for(int j = posZ - renderDistance; j <= posZ + renderDistance; j += 10) {
 				   boolean doesChunkExist = false;
 				   Chunk renderChunk = null;
 				   for(Chunk genChunks : generatedChunks) {

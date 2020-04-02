@@ -72,10 +72,12 @@ public class Camera {
 	}
 	
 	public void testIfPlayerIsInNewChunk() {
-		if((Math.abs((position.x - chunkPosition.x)) >= Chunk.chunkSize) || (Math.abs((position.z - chunkPosition.z)) >= Chunk.chunkSize)) {
+		int posX = (int) Math.floor(Camera.getPosition().x / 10) * 10;
+		int posZ = (int) Math.floor(Camera.getPosition().z / 10) * 10;	
+		if(posX != chunkPosition.x || posZ != chunkPosition.z) {
 			playerInNewChunk = true;
 			
-			chunkPosition = new Vector3f(position.x, position.y, position.z);			
+			chunkPosition = new Vector3f(posX, position.y, posZ);			
 		}
 	}
 	
