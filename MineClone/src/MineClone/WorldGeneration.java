@@ -28,17 +28,20 @@ public class WorldGeneration {
 	public static void chunkController() {
 		Vector3f positionVector = Camera.getPosition();
 		int posX = (int) Math.floor(Camera.getPosition().x / 10) * 10;
-		int posZ = (int) Math.floor(Camera.getPosition().z / 10) * 10;		
+		int posZ = (int) Math.floor(Camera.getPosition().z / 10) * 10;
+		int posY = (int) Math.floor(Camera.getPosition().y / 10) * 10;
 		int renderDistance = 10;
 		
 		if(Camera.isPlayerInNewChunk()) {
 		   renderedChunks.clear();
 		   for(int i = posX - renderDistance; i <= posX + renderDistance; i += 10) {
 			   for(int j = posZ - renderDistance; j <= posZ + renderDistance; j += 10) {
+				   for(int k = posY - renderDistance; k <= posY + renderDistance; k += 10) {
+				   
 				   boolean doesChunkExist = false;
 				   Chunk renderChunk = null;
 				   for(Chunk genChunks : generatedChunks) {
-					   if(i == genChunks.getxStartCoord() && j == genChunks.getzStartCoord()) {
+					   if(i == genChunks.getxStartCoord() && j == genChunks.getzStartCoord() && k == genChunks.getyStartCoord()) {
 						   doesChunkExist = true;
 						   renderChunk = genChunks;
 					   }
@@ -47,8 +50,10 @@ public class WorldGeneration {
 				   if(doesChunkExist) {					
 					   renderedChunks.add(renderChunk);	
 				   } else {
-					   createNewChunk(i, j);
+					   createNewChunk(i, k, j);
 				   }
+				   
+				}
 			   
 			   }
 		   }
@@ -57,8 +62,8 @@ public class WorldGeneration {
 	}	
 	
 	
-	public static void createNewChunk(int xPos, int zPos) {
-		System.out.println("Creating new chunk at-" + xPos + " " + zPos);
+	public static void createNewChunk(int xPos, int yPos, int zPos) {
+		System.out.println("Creating new chunk at: " + xPos + " " + yPos + " " + zPos);
 		
 		int biomespawnermax = 70;
 		int biomespawnermin = 1;
@@ -76,14 +81,21 @@ public class WorldGeneration {
 		
 		
 		Noise height = new Noise(100, 14, 20, 100);
-		Chunk blockChunk = new Chunk(xPos, 0, zPos);
+		Chunk blockChunk = new Chunk(xPos, yPos, zPos);
 		generatedChunks.add(blockChunk);
 		renderedChunks.add(blockChunk);	
 		
 		for(int i = xPos; i < xPos + 10; i++) {
 			for(int j = zPos; j < zPos + 10; j++) {				
-				float zVal = height.generateHeight(i, j);
-				new GrassBlock(loader, blockChunk, new Vector3f(i, zVal , j));
+				for(float k = yPos; k < yPos + 10; k++) {				
+					float zVal = height.generateHeight(i, j);
+					   
+					if(k == zVal) {
+					   new GrassBlock(loader, blockChunk, new Vector3f(i, k , j));	
+					} else if (k < zVal) {
+					   new StoneBlock(loader, blockChunk, new Vector3f(i, k , j));
+					}
+				   
 				//increments a counter to spawn trees
 				treecheck++;
 				//determines if a forest biome spawns
@@ -143,12 +155,8 @@ public class WorldGeneration {
 								}
 							}
 						} 
-					}
-				
-				for(float k = zVal - 1; k > -14; k--) {
-					   new StoneBlock(loader, blockChunk, new Vector3f(i, k , j));	
-					}
-				
+					}			
+				}
 			}
 		}
 		blockChunk.chooseRenderedBlocks();
