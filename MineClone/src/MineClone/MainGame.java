@@ -42,7 +42,7 @@ public class MainGame {
 			
 			
 			for (Chunk chunks : WorldGeneration.getRenderedChunks()) {					
-				for(Entity entity : chunks.getRendered_blocks()) {
+				for(Entity entity : chunks.getRenderedEntities()) {
 					renderer.render(entity, shader);					
 				}				
 			}
