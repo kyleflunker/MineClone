@@ -16,7 +16,7 @@ import Shaders.StaticShader;
 import Tools.Noise;
 
 public class MainGame {
-	
+	//test comment
 	public static Loader loader1 = null;
 	public static StaticShader shader1 = null;
 
