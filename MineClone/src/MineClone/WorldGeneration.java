@@ -1,6 +1,7 @@
 package MineClone;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.lwjgl.util.vector.Vector3f;
 
@@ -15,9 +16,9 @@ import Blocks.TreeBlock;
 import Blocks.LeafBlock;
 import java.util.Random;
 
-public class WorldGeneration {
+public class WorldGeneration {	
 	
-	private static ArrayList<Chunk> generatedChunks = new ArrayList<Chunk>();
+	static HashMap<String, Chunk> generatedChunks = new HashMap<String, Chunk>();
 	private static ArrayList<Chunk> renderedChunks = new ArrayList<Chunk>();
 	static Loader loader;
 	
@@ -25,39 +26,34 @@ public class WorldGeneration {
 		loader = loader1;
 	}
 	
+	private static int initialGeneration = 10;
+	
 	public static void chunkController() {
 		Vector3f positionVector = Camera.getPosition();
 		int posX = (int) Math.floor(Camera.getPosition().x / 10) * 10;
 		int posZ = (int) Math.floor(Camera.getPosition().z / 10) * 10;
 		int posY = (int) Math.floor(Camera.getPosition().y / 10) * 10;
+		
 		int renderDistance = 10;
 		
 		if(Camera.isPlayerInNewChunk()) {
 		   renderedChunks.clear();
-		   for(int i = posX - renderDistance; i <= posX + renderDistance; i += 10) {
-			   for(int j = posZ - renderDistance; j <= posZ + renderDistance; j += 10) {
-				   for(int k = posY - renderDistance; k <= posY + renderDistance; k += 10) {
+		   for(int i = posX - renderDistance - initialGeneration; i <= posX + renderDistance + initialGeneration; i += 10) {
+			   for(int j = posZ - renderDistance - initialGeneration; j <= posZ + renderDistance + initialGeneration; j += 10) {
+				   for(int k = posY - renderDistance - initialGeneration; k <= posY + renderDistance + initialGeneration; k += 10) {
+					   
+					   if(generatedChunks.containsKey(createChunkID(i, k, j))) {
+						   renderedChunks.add(generatedChunks.get(createChunkID(i, k, j)));  
+					   } else {
+						   createNewChunk(i, k, j); 
+					   }				  
 				   
-				   boolean doesChunkExist = false;
-				   Chunk renderChunk = null;
-				   for(Chunk genChunks : generatedChunks) {
-					   if(i == genChunks.getxStartCoord() && j == genChunks.getzStartCoord() && k == genChunks.getyStartCoord()) {
-						   doesChunkExist = true;
-						   renderChunk = genChunks;
-					   }
-				   }
-			   
-				   if(doesChunkExist) {					
-					   renderedChunks.add(renderChunk);	
-				   } else {
-					   createNewChunk(i, k, j);
-				   }
-				   
-				}
-			   
+				   }			   
 			   }
 		   }
 		}
+		
+		initialGeneration = 0;
 		   
 	}	
 	
@@ -82,7 +78,7 @@ public class WorldGeneration {
 		
 		Noise height = new Noise(100, 14, 20, 100);
 		Chunk blockChunk = new Chunk(xPos, yPos, zPos);
-		generatedChunks.add(blockChunk);
+		generatedChunks.put(blockChunk.getChunkID(), blockChunk);
 		renderedChunks.add(blockChunk);	
 		
 		for(int i = xPos; i < xPos + 10; i++) {
@@ -103,6 +99,8 @@ public class WorldGeneration {
 					treecheck = 0;
 					treecheck+=15;
 				}
+				
+				/*
 					if(treecheck == 30) {
 						//determines the height of the tree based on the random num generator above
 						float blockcounter = zVal+7;
@@ -155,7 +153,8 @@ public class WorldGeneration {
 								}
 							}
 						} 
-					}			
+					}
+					*/
 				}
 			}
 		}
@@ -164,8 +163,11 @@ public class WorldGeneration {
 	}
 	
 	
+	public static String createChunkID(int xCoord, int yCoord, int zCoord) {		
+		return (xCoord + "-" + yCoord + "-" + zCoord);
+	}
 
-	public static ArrayList<Chunk> getGeneratedChunks() {
+	public static HashMap<String, Chunk> getGeneratedChunks() {
 		return generatedChunks;
 	}
 	

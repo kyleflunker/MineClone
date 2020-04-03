@@ -10,7 +10,7 @@ public class Chunk {
 	
 	public static int chunkSize = 10;	
 	
-	private Block[] chunkBlocks = new Block[1000];
+	private Block[] chunkBlocks = new Block[1001];
 	private ArrayList<Entity> renderedEntities = new ArrayList<Entity>();  // list of all entities that exist in the chunk and should be rendered
 	
 	private int xStartCoord;
@@ -89,6 +89,9 @@ public class Chunk {
 		int z = (int) Math.abs(z1) % Chunk.chunkSize;
 		int y = (int) Math.abs(y1) % Chunk.chunkSize;		
 		int arrayPos = (x * 100) + (z * 10) + (y);
+		if(arrayPos < 0 || arrayPos > 1000) {
+			arrayPos = 1001;
+		}
 		return arrayPos;		
 	}
 
