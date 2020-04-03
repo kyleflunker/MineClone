@@ -29,7 +29,7 @@ public class WorldGeneration {
 		Vector3f positionVector = Camera.getPosition();
 		int posX = (int) Math.floor(Camera.getPosition().x / 10) * 10;
 		int posZ = (int) Math.floor(Camera.getPosition().z / 10) * 10;		
-		int renderDistance = 10;
+		int renderDistance = 20;
 		
 		if(Camera.isPlayerInNewChunk()) {
 		   renderedChunks.clear();
