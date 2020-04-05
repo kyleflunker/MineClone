@@ -10,6 +10,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
 
+import Entities.Camera;
 import MineClone.MainGame;
 
 public class DisplayManager {
@@ -40,7 +41,7 @@ public class DisplayManager {
 	
 	public static void updateDisplay() {
 		
-		Display.sync(FPS_CAP);
+		Display.sync(9999999*FPS_CAP);
 		Display.update();
 		
 		while(Keyboard.next()) {

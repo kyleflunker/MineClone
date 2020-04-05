@@ -2,34 +2,58 @@ package Blocks;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import Entities.Entity;
 import Models.RawModel;
-import Models.TexturedModel;
 import RenderEngine.Loader;
-import Textures.ModelTexture;
+import java.util.List;
 
 public class GrassBlock extends GeneratedBlocks {
 	
-	private String textureString1 = "grassSide";
-	private String textureString2 = "grassTop";
-	private String textureString3 = "dirtTex";
 
-	public GrassBlock(Loader loader, Chunk chunk, Vector3f position) {
+	private static RawModel model1 = null;
+
+	private static float[] topside_vert;
+	private static int[] topside_idx;
+	private static float[] topside_uv;
+
+	public GrassBlock(Loader loader, Chunk chunk, Vector3f position, List<Float> Vs, List<Integer> Is, List<Float> Us) {
 		super(loader, chunk, position);
-		
-			RawModel model1 = loader.loadToVAO(side_block_vertices, side_block_indices, side_block_uv);
-			ModelTexture texture1 = new ModelTexture(loader.loadTexture(textureString1));
-			TexturedModel texModel1 = new TexturedModel(model1, texture1);	
-			
-			RawModel model2 = loader.loadToVAO(top_side_block_vertices, single_side_block_indices, single_side_block_uv);
-			ModelTexture texture2 = new ModelTexture(loader.loadTexture(textureString2));
-			TexturedModel texModel2 = new TexturedModel(model2, texture2);			
-			
-			RawModel model3 = loader.loadToVAO(bottom_side_block_vertices, single_side_block_indices, single_side_block_uv);
-			ModelTexture texture3 = new ModelTexture(loader.loadTexture(textureString3));
-			TexturedModel texModel3 = new TexturedModel(model3, texture3);
-			
-			chunk.addToChunkBlocks(new Block(position, new Entity(texModel3, position, 0, 0, 0, 1, bottomFace), new Entity(texModel2, position, 0, 0, 0, 1, topFace), new Entity(texModel1, position, 0, 0, 0, 1, sideFaces)));
+			if (model1 == null) {
+				topside_vert = new float[side_block_vertices.length + top_side_block_vertices.length + bottom_side_block_vertices.length];
+				topside_idx = new int[side_block_indices.length + single_side_block_indices.length + single_side_block_indices.length];
+				topside_uv = new float[side_block_uv.length + single_side_block_uv_grass_top.length + single_side_block_uv_grass_bot.length];
+
+				System.arraycopy(side_block_vertices, 0, topside_vert, 0, side_block_vertices.length);
+				System.arraycopy(side_block_indices, 0, topside_idx, 0, side_block_indices.length);
+				System.arraycopy(side_block_uv, 0, topside_uv, 0, side_block_uv.length);
+
+				System.arraycopy(top_side_block_vertices, 0, topside_vert, side_block_vertices.length, top_side_block_vertices.length);
+				System.arraycopy(single_side_block_indices, 0, topside_idx, side_block_indices.length, single_side_block_indices.length);
+				System.arraycopy(single_side_block_uv_grass_top, 0, topside_uv, side_block_uv.length, single_side_block_uv_grass_top.length);
+
+				System.arraycopy(bottom_side_block_vertices, 0, topside_vert, side_block_vertices.length+top_side_block_vertices.length, bottom_side_block_vertices.length);
+				System.arraycopy(single_side_block_indices, 0, topside_idx, side_block_indices.length+single_side_block_indices.length, single_side_block_indices.length);
+				System.arraycopy(single_side_block_uv_grass_bot, 0, topside_uv, side_block_uv.length+single_side_block_uv_grass_top.length, single_side_block_uv_grass_bot.length);
+
+				for (int i = side_block_indices.length; i < single_side_block_indices.length + side_block_indices.length; ++i) {
+					topside_idx[i] += side_block_vertices.length / 3;
+				}
+
+				for (int i = single_side_block_indices.length + side_block_indices.length; i < side_block_indices.length + single_side_block_indices.length + single_side_block_indices.length; ++i) {
+					topside_idx[i] += (side_block_vertices.length + top_side_block_vertices.length) / 3;
+				}
+
+				for (int f : topside_idx) Is.add(Vs.size()/3 + f);
+				int asd = 0;
+				for (float f : topside_vert) {
+					float offs = 0;
+					if (asd == 0) offs = position.x - chunk.position.x;
+					if (asd == 1) offs = position.y - chunk.position.y;
+					if (asd == 2) offs = position.z - chunk.position.z;
+					Vs.add(f + offs);
+					asd = (asd + 1) % 3;
+				}
+				for (float f : topside_uv) Us.add(f);
+			}
 			
 		}	
 		

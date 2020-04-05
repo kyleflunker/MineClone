@@ -18,7 +18,7 @@ public class DirtBlock extends GeneratedBlocks {
 			RawModel model = loader.loadToVAO(all_sides_block_vertices, all_sides_block_indices, all_sides_block_uv);
 			ModelTexture texture = new ModelTexture(loader.loadTexture(textureString));
 			TexturedModel texModel = new TexturedModel(model, texture);
-			chunk.addToChunkBlocks(new Block(position, new Entity(texModel, position, 0, 0, 0, 1, allFaces)));
+			//chunk.addToChunkBlocks(new Block(position, new Entity(texModel, position, 0, 0, 0, 1)));
 		}
 		
 }

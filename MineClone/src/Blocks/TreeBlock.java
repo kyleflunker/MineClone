@@ -28,7 +28,7 @@ public class TreeBlock extends GeneratedBlocks {
 		ModelTexture texture3 = new ModelTexture(loader.loadTexture(textureString2));
 		TexturedModel texModel3 = new TexturedModel(model3, texture3);
 		
-		chunk.addToChunkBlocks(new Block(position, new Entity(texModel3, position, 0, 0, 0, 1, bottomFace), new Entity(texModel2, position, 0, 0, 0, 1, topFace), new Entity(texModel, position, 0, 0, 0, 1, sideFaces) ));
+		//chunk.addToChunkBlocks(new Block(position, new Entity(texModel3, position, 0, 0, 0, 1, bottomFace), new Entity(texModel2, position, 0, 0, 0, 1, topFace), new Entity(texModel, position, 0, 0, 0, 1, sideFaces) ));
 		
 		
 	}

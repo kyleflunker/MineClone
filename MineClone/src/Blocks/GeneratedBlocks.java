@@ -1,19 +1,9 @@
 package Blocks;
-
-import java.util.ArrayList;
-
+import java.util.HashMap;
 import org.lwjgl.util.vector.Vector3f;
-
-import Entities.Entity;
 import RenderEngine.Loader;
 
-public class GeneratedBlocks {
-	
-	//block Entity Types
-	final public String topFace = "top";
-	final public String bottomFace = "bottom";
-	final public String sideFaces = "sides";
-	final public String allFaces = "solid";
+public class GeneratedBlocks {	
 	
 	public static float[] all_sides_block_vertices = {
 			
@@ -91,6 +81,38 @@ public class GeneratedBlocks {
 			1, 0
 			
 	};
+
+
+
+	
+	public static float[] all_sides_block_uv_stone = {
+		
+			0.75f, 0,
+			0.75f, 1,
+			1, 1,
+			1, 0,
+			0.75f, 0,
+			0.75f, 1,
+			1, 1,
+			1, 0,
+			0.75f, 0,
+			0.75f, 1,
+			1, 1,
+			1, 0,
+			0.75f, 0,
+			0.75f, 1,
+			1, 1,
+			1, 0,
+			0.75f, 0,
+			0.75f, 1,
+			1, 1,
+			1, 0,
+			0.75f, 0,
+			0.75f, 1,
+			1, 1,
+			1, 0
+			
+	};
 	
 public static float[] side_block_vertices = {			
 				
@@ -132,22 +154,25 @@ public static float[] side_block_vertices = {
 	
 	public static float[] side_block_uv = {
 		
-			0, 0,
-			0, 1,
-			1, 1,
-			1, 0,
-			0, 0,
-			0, 1,
-			1, 1,
-			1, 0,
-			0, 0,
-			0, 1,
-			1, 1,
-			1, 0,
-			0, 0,
-			0, 1,
-			1, 1,
-			1, 0,			
+			0.25f, 0,
+			0.25f, 1,
+			0.5f, 1,
+			0.5f, 0,		
+		
+			0.25f, 0,
+			0.25f, 1,
+			0.5f, 1,
+			0.5f, 0,		
+		
+			0.25f, 0,
+			0.25f, 1,
+			0.5f, 1,
+			0.5f, 0,		
+		
+			0.25f, 0,
+			0.25f, 1,
+			0.5f, 1,
+			0.5f, 0,		
 			
 	};
 	
@@ -180,6 +205,24 @@ public static float[] side_block_vertices = {
 			0, 1,
 			1, 1,
 			1, 0,				
+			
+	};
+	
+	public static float[] single_side_block_uv_grass_top = {
+		
+			0, 0,
+			0, 1,
+			0.25f, 1,
+			0.25f, 0,				
+			
+	};
+	
+	public static float[] single_side_block_uv_grass_bot = {
+		
+			0.5f, 0,
+			0.5f, 1,
+			0.75f, 1,
+			0.75f, 0,				
 			
 	};
 	

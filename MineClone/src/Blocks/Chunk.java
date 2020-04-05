@@ -1,10 +1,18 @@
 package Blocks;
 
-import java.util.ArrayList;
-
 import org.lwjgl.util.vector.Vector3f;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
+
 import Entities.Entity;
+import MineClone.MainGame;
+import MineClone.WorldGeneration;
+import Models.RawModel;
+import Models.TexturedModel;
+import Textures.ModelTexture;
 
 public class Chunk {
 	
@@ -15,56 +23,85 @@ public class Chunk {
 	
 	private int xStartCoord;
 	private int yStartCoord;
-	private int zStartCoord;	
+	private int zStartCoord;
+	public Vector3f position;	
 	private String chunkID; 
+	public boolean needsRender = true;
+	private int vaoID = -1;
 	
 	
 	public Chunk(int xCoord, int yCoord, int zCoord) {
 		this.xStartCoord = xCoord;
 		this.yStartCoord = yCoord;
 		this.zStartCoord = zCoord;
+		this.position = new Vector3f(xCoord, yCoord, zCoord);
 		this.setChunkID(xCoord + "-" + yCoord + "-" + zCoord);
 	}
 	
 	// this decides which entities in the chunk should be rendered (to save resources)
 	public void chooseRenderedBlocks() {
-		renderedEntities.clear();	
-		
+		needsRender = false;
+		renderedEntities.clear();
+
+
+		List<Float> vert = new ArrayList<>();
+		List<Integer> ndx = new ArrayList<>();
+		List<Float> uv = new ArrayList<>();
+
 		for(Block block : chunkBlocks) {
 			if(block != null) {
-				checkForAdjacentBlocks(block);
+				if (checkForAdjacentBlocks(block)) {
+					if (block.type == 0) {
+						new GrassBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+					} else if (block.type == 1) {
+						new StoneBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+					} else if (block.type == 2) {
+						//new DirtBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+					} else if (block.type == 3) {
+						//new TreeBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+					} else if (block.type == 4) {
+						//new LeafBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+					}
+				}
 			}
 		}
+
+		Vector3f pos = position;
+		float[] vert_ = new float[vert.size()];
+		int[] ndx_ = new int[ndx.size()];
+		float[] uv_ = new float[uv.size()];
+
+		for (int i = 0; i < vert_.length; ++i) vert_[i] = vert.get(i);
+		for (int i = 0; i < ndx_.length; ++i) ndx_[i] = ndx.get(i);
+		for (int i = 0; i < uv_.length; ++i) uv_[i] = uv.get(i);
+
+		RawModel model = MainGame.loader1.loadToVAO(vert_, ndx_, uv_, vaoID);
+		vaoID = model.getVaoID();
+		ModelTexture texture = new ModelTexture(MainGame.loader1.loadTexture("spriteSheet"));
+		TexturedModel texModel = new TexturedModel(model, texture);
+		renderedEntities.add(new Entity(texModel, pos, 0, 0, 0, 1));
 	}
 		
-	public void checkForAdjacentBlocks(Block block) {
-		Vector3f blockPos = block.getBlockPosition();
-		boolean topFaceCovered = (chunkBlocks[determineArrayPosition(blockPos.x, blockPos.y + 1, blockPos.z)] != null);
-		boolean bottomFaceCovered = (chunkBlocks[determineArrayPosition(blockPos.x, blockPos.y - 1, blockPos.z)] != null);
-		boolean sideFacesCovered = (chunkBlocks[determineArrayPosition(blockPos.x + 1, blockPos.y, blockPos.z)] != null &&
-				chunkBlocks[determineArrayPosition(blockPos.x - 1, blockPos.y, blockPos.z)] != null &&
-				chunkBlocks[determineArrayPosition(blockPos.x, blockPos.y, blockPos.z + 1)] != null &&
-				chunkBlocks[determineArrayPosition(blockPos.x, blockPos.y, blockPos.z - 1)] != null			
-				);
-		for(Entity blockEntity : block.getBlockEntities()) {
-			if(blockEntity.getEntityType().equals("solid")) {
-				if(!topFaceCovered || !bottomFaceCovered || !sideFacesCovered) {
-					renderedEntities.add(blockEntity);
-				}
-			} else if (blockEntity.getEntityType().equals("top")) {
-				if(!topFaceCovered) {
-					renderedEntities.add(blockEntity);
-				}
-			} else if (blockEntity.getEntityType().equals("bottom")) {
-				if(!bottomFaceCovered) {
-					renderedEntities.add(blockEntity);
-				}
-			} else if (blockEntity.getEntityType().equals("sides")) {
-				if(!sideFacesCovered) {
-					renderedEntities.add(blockEntity);
-				}
-			}
-		}
+
+	public boolean checkForAdjacentBlocks(Block block) {
+		return checkForAdjacentBlocks(block.getBlockPosition());
+	}
+
+	public static boolean checkForAdjacentBlocks(Vector3f blockPos) {
+		
+		Vector3f p = blockPos;
+		int x = (int)p.x;
+		int y = (int)p.y;
+		int z = (int)p.z;
+		boolean secondWay =
+		!WorldGeneration.isBlockSolid(x-1, y  , z  ) ||
+		!WorldGeneration.isBlockSolid(x+1, y  , z  ) ||
+		!WorldGeneration.isBlockSolid(x  , y-1, z  ) ||
+		!WorldGeneration.isBlockSolid(x  , y+1, z  ) ||
+		!WorldGeneration.isBlockSolid(x  , y  , z-1) ||
+		!WorldGeneration.isBlockSolid(x  , y  , z+1);
+
+		return secondWay;
 		
 	}	
 		
@@ -87,7 +124,7 @@ public class Chunk {
 	public int determineArrayPosition(float x1, float y1, float z1) {
 		int x = (int) Math.abs(x1) % Chunk.chunkSize;
 		int z = (int) Math.abs(z1) % Chunk.chunkSize;
-		int y = (int) Math.abs(y1) % Chunk.chunkSize;		
+		int y = (int) Math.abs(y1) % Chunk.chunkSize;
 		int arrayPos = (x * 100) + (z * 10) + (y);
 		if(arrayPos < 0 || arrayPos > 1000) {
 			arrayPos = 1001;

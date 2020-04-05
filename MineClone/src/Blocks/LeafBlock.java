@@ -19,7 +19,7 @@ public class LeafBlock extends GeneratedBlocks {
 		ModelTexture texture = new ModelTexture(loader.loadTexture(leaftexture));
 		TexturedModel texModel = new TexturedModel(model, texture);
 		
-		chunk.addToChunkBlocks(new Block(position, new Entity(texModel, position, 0, 0, 0, 1, allFaces)));		
+		//chunk.addToChunkBlocks(new Block(position, new Entity(texModel, position, 0, 0, 0, 1)));		
 
 	}
 }

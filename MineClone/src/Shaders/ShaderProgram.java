@@ -101,10 +101,9 @@ public abstract class ShaderProgram {
 	
 	
 	private int loadShader(String file, int type) {
-		
 		StringBuilder shaderSource = new StringBuilder();
 		
-		InputStream in  = Class.class.getResourceAsStream(file);
+		InputStream in  = getClass().getResourceAsStream(file);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 		
 		String line;
