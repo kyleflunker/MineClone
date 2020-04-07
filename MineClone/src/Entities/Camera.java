@@ -16,7 +16,7 @@ public class Camera {
 	float rotX;
 	float rotY;
 	float rotZ;
-	float speed = 0.03f;
+	float speed = 0.1f;
 	float turn_speed = .1f;
 	float moveAt = 0;
 	
@@ -92,7 +92,6 @@ public class Camera {
 	
 	public static boolean isPlayerInNewChunk() {
 		if(playerInNewChunk) {
-		   System.out.println("Player is in new chunk.");	
 		   playerInNewChunk = false;	
 		   return true;
 		} else {

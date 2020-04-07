@@ -17,7 +17,7 @@ public class DisplayManager {
 	
 	private static final int WIDTH = 1280;
 	private static final int HEIGHT = 720;
-	private static final int FPS_CAP = 60;
+	private static final int FPS_CAP = 70;
 	
 	public static void createDisplay() {
 		
@@ -41,7 +41,7 @@ public class DisplayManager {
 	
 	public static void updateDisplay() {
 		
-		Display.sync(9999999*FPS_CAP);
+		Display.sync(FPS_CAP);
 		Display.update();
 		
 		while(Keyboard.next()) {

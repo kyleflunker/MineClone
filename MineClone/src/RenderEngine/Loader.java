@@ -101,9 +101,6 @@ public class Loader {
 	}
 	
 	public void cleanUp() {
-		System.out.println(vaos.size());
-		System.out.println(vbos.size());
-		System.out.println(textures.size());
 		
 		for(int vao : vaos) {
 			GL30.glDeleteVertexArrays(vao);

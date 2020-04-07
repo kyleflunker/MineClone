@@ -1,12 +1,8 @@
 package Blocks;
 
 import org.lwjgl.util.vector.Vector3f;
-
 import java.util.ArrayList;
 import java.util.List;
-
-
-
 import Entities.Entity;
 import MineClone.MainGame;
 import MineClone.WorldGeneration;
@@ -38,7 +34,7 @@ public class Chunk {
 		this.setChunkID(xCoord + "-" + yCoord + "-" + zCoord);
 	}
 	
-	// this decides which entities in the chunk should be rendered (to save resources)
+	// this decides which blocks in the chunk should be rendered (to save resources)
 	public void chooseRenderedBlocks() {
 		needsRender = false;
 		renderedEntities.clear();
@@ -51,17 +47,42 @@ public class Chunk {
 		for(Block block : chunkBlocks) {
 			if(block != null) {
 				if (checkForAdjacentBlocks(block)) {
-					if (block.type == 0) {
+					switch(block.type) {
+					case 0:
 						new GrassBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
-					} else if (block.type == 1) {
+						break;
+					case 1:
 						new StoneBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
-					} else if (block.type == 2) {
-						//new DirtBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
-					} else if (block.type == 3) {
-						//new TreeBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
-					} else if (block.type == 4) {
-						//new LeafBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 2:
+						new DirtBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 3:
+						new SandBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 4:
+						new OakTreeBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 5:
+						new OakLeafBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 6:
+						new BirchTreeBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 7:
+						new BirchLeafBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 8:
+						new JungleTreeBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 9:
+						new JungleLeafBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 10:
+						new CactusBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;							
 					}
+					
 				}
 			}
 		}
@@ -77,7 +98,7 @@ public class Chunk {
 
 		RawModel model = MainGame.loader1.loadToVAO(vert_, ndx_, uv_, vaoID);
 		vaoID = model.getVaoID();
-		ModelTexture texture = new ModelTexture(MainGame.loader1.loadTexture("spriteSheet"));
+		ModelTexture texture = new ModelTexture(MainGame.loader1.loadTexture("blockSheet"));
 		TexturedModel texModel = new TexturedModel(model, texture);
 		renderedEntities.add(new Entity(texModel, pos, 0, 0, 0, 1));
 	}
@@ -87,13 +108,12 @@ public class Chunk {
 		return checkForAdjacentBlocks(block.getBlockPosition());
 	}
 
-	public static boolean checkForAdjacentBlocks(Vector3f blockPos) {
-		
-		Vector3f p = blockPos;
-		int x = (int)p.x;
-		int y = (int)p.y;
-		int z = (int)p.z;
-		boolean secondWay =
+	//check to see if the argument block is surrounded on each side
+	public static boolean checkForAdjacentBlocks(Vector3f blockPos) {	
+		int x = (int)blockPos.x;
+		int y = (int)blockPos.y;
+		int z = (int)blockPos.z;
+		boolean shouldRender =
 		!WorldGeneration.isBlockSolid(x-1, y  , z  ) ||
 		!WorldGeneration.isBlockSolid(x+1, y  , z  ) ||
 		!WorldGeneration.isBlockSolid(x  , y-1, z  ) ||
@@ -101,8 +121,7 @@ public class Chunk {
 		!WorldGeneration.isBlockSolid(x  , y  , z-1) ||
 		!WorldGeneration.isBlockSolid(x  , y  , z+1);
 
-		return secondWay;
-		
+		return shouldRender;
 	}	
 		
 
@@ -116,19 +135,19 @@ public class Chunk {
 	}
 
 
-	
+	//when adding a block to a chunk, add it to the chunkBlocks array so it can be easily accessed based upon position
 	public void addToChunkBlocks(Block block) {		
 		chunkBlocks[determineArrayPosition(block.getBlockPosition().x, block.getBlockPosition().y, block.getBlockPosition().z)] = block;		
 	}
 	
+	
+	//uses simple algorithm to determine where to store the block object in the chunkBlocks array
 	public int determineArrayPosition(float x1, float y1, float z1) {
 		int x = (int) Math.abs(x1) % Chunk.chunkSize;
 		int z = (int) Math.abs(z1) % Chunk.chunkSize;
 		int y = (int) Math.abs(y1) % Chunk.chunkSize;
 		int arrayPos = (x * 100) + (z * 10) + (y);
-		if(arrayPos < 0 || arrayPos > 1000) {
-			arrayPos = 1001;
-		}
+		
 		return arrayPos;		
 	}
 

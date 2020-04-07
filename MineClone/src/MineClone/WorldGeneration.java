@@ -13,8 +13,8 @@ import Entities.Camera;
 import Blocks.Chunk;
 import RenderEngine.Loader;
 import Tools.Noise;
-import Blocks.TreeBlock;
-import Blocks.LeafBlock;
+import Blocks.OakTreeBlock;
+import Blocks.OakLeafBlock;
 import java.util.Random;
 import Models.*; import Textures.*; import Entities.*; import Blocks.*;
 
@@ -90,8 +90,10 @@ public class WorldGeneration {
 				for(float k = yPos; k < yPos + 10; k++) {		
 					   
 					if(k == zVal) {
+						// if top layer, add a grass block (block.type = 0)
 						blockChunk.addToChunkBlocks(new Block(new Vector3f(i, k , j), 0));	
 					} else if (k < zVal) {
+						// if k is below the top layer, add a stone block (block.type = 1)
 						blockChunk.addToChunkBlocks(new Block(new Vector3f(i, k , j), 1));
 					}
 				   
