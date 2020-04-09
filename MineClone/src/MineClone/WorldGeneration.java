@@ -74,7 +74,7 @@ public class WorldGeneration {
 		int treecheck = num2.nextInt((treecheckmax - treecheckmin) + 1) + treecheckmin;
 		
 		
-		Noise height = new Noise(100, 14, 20, 32423);
+		Noise height = new Noise(100, 14, 20, 3567);
 		Chunk blockChunk = new Chunk(xPos, yPos, zPos);
 		
 		//since a new chunk is being created, we must re-render its adjacent chunks (if they exist)
