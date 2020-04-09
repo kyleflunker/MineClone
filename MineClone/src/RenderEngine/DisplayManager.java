@@ -10,13 +10,14 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
 
+import Entities.Camera;
 import MineClone.MainGame;
 
 public class DisplayManager {
 	
 	private static final int WIDTH = 1280;
 	private static final int HEIGHT = 720;
-	private static final int FPS_CAP = 60;
+	private static final int FPS_CAP = 70;
 	
 	public static void createDisplay() {
 		

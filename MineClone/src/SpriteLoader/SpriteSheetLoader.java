@@ -1,43 +1,119 @@
-
-/*Currently not functioning
 package SpriteLoader;
 
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
-
+import java.math.BigDecimal;
 
 public class SpriteSheetLoader {
 	
-	BufferedImage spritesheet = ImageIO.read(new File("resources/TreeBark.png"));
+	public final static float spriteSheetWidth = 512.0f;
+	public final static float spriteSheetHeight = 512.0f;
+	public final static float textureSize = 128.0f;
 	
-	int width;
-	int height;
-	int rows;
-	int columns;
-	
-	BufferedImage[] sprites;
-	
-	public SpriteSheetLoader(int width, int height, int rows, int columns) throws IOException {
+	public static float[] getUVCoords(float texPosX, float texPosY, int numOfFaces) {
 		
-		this.width = width;
-		this.height = height;
-		this.rows = rows;
-		this.columns = columns;
-		sprites = new BufferedImage[rows * columns];
+		float leftX = getLeftXTexCoord(texPosX);
+		float rightX = getRightXTexCoord(texPosX);
+		float topY = getTopYTexCoord(texPosY);
+		float bottomY = getBottomYTexCoord(texPosY);
 		
-		for(int i = 0; i < rows; i++) {
-			for(int j = 0; j < columns; j++) {
-				sprites[(i * columns) + j] = spritesheet.getSubimage(i*width, j*height, width, height);
-			}
+		if(numOfFaces == 6) {
+			float[] UVCoords = {
+					
+					leftX, topY,
+					leftX, bottomY,
+					rightX, bottomY,
+					rightX, topY,
+					leftX, topY,
+					leftX, bottomY,
+					rightX, bottomY,
+					rightX, topY,
+					leftX, topY,
+					leftX, bottomY,
+					rightX, bottomY,
+					rightX, topY,
+					leftX, topY,
+					leftX, bottomY,
+					rightX, bottomY,
+					rightX, topY,
+					leftX, topY,
+					leftX, bottomY,
+					rightX, bottomY,
+					rightX, topY,
+					leftX, topY,
+					leftX, bottomY,
+					rightX, bottomY,
+					rightX, topY
+					
+			};
+			return UVCoords;
+			
+		} else if(numOfFaces == 4) {
+			
+			float[] UVCoords = {
+					
+					leftX, topY,
+					leftX, bottomY,
+					rightX, bottomY,
+					rightX, topY,
+					leftX, topY,
+					leftX, bottomY,
+					rightX, bottomY,
+					rightX, topY,
+					leftX, topY,
+					leftX, bottomY,
+					rightX, bottomY,
+					rightX, topY,
+					leftX, topY,
+					leftX, bottomY,
+					rightX, bottomY,
+					rightX, topY	
+			};
+			return UVCoords;
+			
+		} else if(numOfFaces == 1) {
+			
+			float[] UVCoords = {
+					
+					leftX, topY,
+					leftX, bottomY,
+					rightX, bottomY,
+					rightX, topY,
+					
+			};			
+			return UVCoords;
+			
 		}
-		
+		return null;
 	}
-	public void draw(Graphics g) {
-		g.drawImage(sprites[1], 10, 10, null);
+	
+	
+	public static float getRightXTexCoord(float texPosX) {
+		float rightX = ((textureSize * texPosX) / spriteSheetWidth);
+		return rightX;
 	}
+	
+	public static float getTopYTexCoord(float texPosY) {
+		BigDecimal test = BigDecimal.valueOf((textureSize * texPosY) / spriteSheetHeight);
+		BigDecimal test1 = BigDecimal.valueOf(textureSize / spriteSheetHeight);
+		float topY = test.subtract(test1).floatValue();
+    return topY;
+	}	
+	
+	public static float getLeftXTexCoord(float texPosX) {
+		 BigDecimal test = BigDecimal.valueOf((textureSize * texPosX) / spriteSheetWidth);
+		 BigDecimal test1 = BigDecimal.valueOf(textureSize / spriteSheetWidth);
+		float leftX = test.subtract(test1).floatValue();
+		return leftX;
+	}
+	
+	public static float getBottomYTexCoord(float texPosY) {
+		float bottomY = (textureSize * texPosY) / spriteSheetHeight;
+		return bottomY;
+	}	
+		
+		
+		
+}
+	
 		
 	
 	
@@ -46,4 +122,3 @@ public class SpriteSheetLoader {
 	
 	
 	
-}*/

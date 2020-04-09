@@ -13,6 +13,7 @@ import RenderEngine.DisplayManager;
 import RenderEngine.Loader;
 import RenderEngine.MasterRenderer;
 import Shaders.StaticShader;
+import SpriteLoader.SpriteSheetLoader;
 import Tools.Noise;
 
 public class MainGame {
@@ -27,12 +28,15 @@ public class MainGame {
 		loader1 = loader;
 		StaticShader shader = new StaticShader();
 		shader1 = shader;
-		MasterRenderer renderer = new MasterRenderer(shader);
+		MasterRenderer renderer = new MasterRenderer(shader);		
 		
+		Camera camera = new Camera(new Vector3f(5, 5, 5), 0 ,0, 0);
 		
-		WorldGeneration.setLoader(loader);
-		Camera camera = new Camera(new Vector3f(0, 0, 0), 0 ,0, 0);
-		
+
+		long millis = System.currentTimeMillis();
+		long frames = 0;
+
+
 		while(!Display.isCloseRequested()) {
 			
 			camera.move();			
@@ -41,8 +45,8 @@ public class MainGame {
 			shader.loadViewMatrix(camera);
 			
 			
-			for (Chunk chunks : WorldGeneration.getRenderedChunks()) {					
-				for(Entity entity : chunks.getRendered_blocks()) {
+			for (Chunk chunks : WorldGeneration.getRenderedChunks()) {
+				for(Entity entity : chunks.getRenderedEntities()) {
 					renderer.render(entity, shader);					
 				}				
 			}
@@ -53,6 +57,12 @@ public class MainGame {
 			shader.stop();
 			DisplayManager.updateDisplay();
 			
+			frames++;
+			if (System.currentTimeMillis() - millis > 1000) {
+				System.out.printf("FPS: %f\n", frames / ((System.currentTimeMillis() - millis) / (double)1000));
+				millis = System.currentTimeMillis();
+				frames = 0;
+			}
 		}
 		
 		DisplayManager.closeDisplay();

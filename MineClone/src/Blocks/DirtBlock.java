@@ -1,5 +1,7 @@
 package Blocks;
 
+import java.util.List;
+
 import org.lwjgl.util.vector.Vector3f;
 
 import Entities.Entity;
@@ -10,16 +12,21 @@ import Textures.ModelTexture;
 
 public class DirtBlock extends GeneratedBlocks {
 	
-	private String textureString = "dirtTex";		
+	private int dirtTexX = 2;  //x position of dirt texture on blockSheet.png	
+	private int dirtTexY = 1;  //y position of dirt texture on blockSheet.png
+	private static RawModel model = null;
 	
 
-	public DirtBlock(Loader loader, Chunk chunk, Vector3f position) {
+	public DirtBlock(Loader loader, Chunk chunk, Vector3f position, List<Float> Vs, List<Integer> Is, List<Float> Us) {
 		super(loader, chunk, position);
-			RawModel model = loader.loadToVAO(all_sides_block_vertices, all_sides_block_indices, all_sides_block_uv);
-			ModelTexture texture = new ModelTexture(loader.loadTexture(textureString));
-			TexturedModel texModel = new TexturedModel(model, texture);
-			chunk.addTo_chunk_blocks(new Entity(texModel, position, 0, 0, 0, 1, allFaces));
+		
+		if (model == null) {
+			
+			addSolidBlockVertAndInd(chunk, position, Vs, Is);  
+			addSolidBlockUV(dirtTexX, dirtTexY, Us);  
+			
 		}
+	}
 		
 }
 

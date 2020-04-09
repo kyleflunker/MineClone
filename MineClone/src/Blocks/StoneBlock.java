@@ -2,31 +2,26 @@ package Blocks;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import Entities.Entity;
+
 import Models.RawModel;
-import Models.TexturedModel;
 import RenderEngine.Loader;
-import Textures.ModelTexture;
+
+import java.util.List;
 
 public class StoneBlock extends GeneratedBlocks {
 	
-	private String textureString = "stoneTex";
+	private int stoneTexX = 4;  //x position of stone texture on blockSheet.png	
+	private int stoneTexY = 1;  //y position of stone texture on blockSheet.png
+	private static RawModel model = null;
 	
-	boolean multiTextured = false;
-	
-	
-	public StoneBlock(Loader loader, Chunk chunk, Vector3f position) {
+	public StoneBlock(Loader loader, Chunk chunk, Vector3f position, List<Float> Vs, List<Integer> Is, List<Float> Us) {
 		super(loader, chunk, position);
-		RawModel model = loader.loadToVAO(all_sides_block_vertices, all_sides_block_indices, all_sides_block_uv);
-		ModelTexture texture = new ModelTexture(loader.loadTexture(textureString));
-		TexturedModel texModel = new TexturedModel(model, texture);
-		chunk.addTo_chunk_blocks(new Entity(texModel, position, 0, 0, 0, 1, allFaces));
-		
+
+		if (model == null) {
+			
+			addSolidBlockVertAndInd(chunk, position, Vs, Is);  
+			addSolidBlockUV(stoneTexX, stoneTexY, Us);  
+			
+		}
 	}
-
-
-;
-	
-
-
 }

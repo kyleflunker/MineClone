@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -20,10 +22,11 @@ public class Loader {
 	static List<Integer> vaos = new ArrayList<Integer>();
 	static List<Integer> vbos = new ArrayList<Integer>();
 	static List<Integer> textures = new ArrayList<Integer>();
-	
-	public RawModel loadToVAO(float[] vertices, int[] indices, float[] uv) {
-		
-		int vaoID = createVAO();
+
+	public RawModel loadToVAO(float[] vertices, int[] indices, float[] uv) { return loadToVAO(vertices, indices, uv, -1); }
+	public RawModel loadToVAO(float[] vertices, int[] indices, float[] uv, int vaoID) {
+		if (vaoID == -1) vaoID = createVAO();
+		GL30.glBindVertexArray(vaoID);
 		storeDataInAttributeList(vertices, 0, 3);
 		storeDataInAttributeList(uv, 1, 2);
 		bindIndicesBuffer(indices);
@@ -33,26 +36,30 @@ public class Loader {
 		
 	}
 	
-	public int createVAO() {
+	private int createVAO() {
 		
 		int vaoID = GL30.glGenVertexArrays();
 		vaos.add(vaoID);
-		GL30.glBindVertexArray(vaoID);
 		
 		return vaoID;
 		
 	}
 	
+	static Map<String, Integer> textureCache = new HashMap<String, Integer>();
 	public int loadTexture(String fileName) {
+		if (textureCache.containsKey(fileName)) return textureCache.get(fileName);
+
 		Texture texture = null;
 		try {
-			texture = TextureLoader.getTexture("PNG", Class.class.getResourceAsStream("/res/" + fileName + ".PNG"));
+			texture = TextureLoader.getTexture("PNG", getClass().getResourceAsStream("/res/" + fileName + ".PNG"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		int textureID = texture.getTextureID();
 		textures.add(textureID);
+
+		textureCache.put(fileName, textureID);
 		return textureID;
 	}
 	

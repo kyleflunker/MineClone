@@ -1,170 +1,154 @@
 package Blocks;
 
+import org.lwjgl.util.vector.Vector3f;
 import java.util.ArrayList;
+import java.util.List;
 import Entities.Entity;
+import MineClone.MainGame;
+import MineClone.WorldGeneration;
+import Models.RawModel;
+import Models.TexturedModel;
+import Textures.ModelTexture;
 
 public class Chunk {
 	
-	public static int chunkSize = 10;
+	public static int chunkSize = 10;	
 	
-	private ArrayList<Entity> chunk_blocks = new ArrayList<Entity>();  // list of all blocks that exist in the chunk
-	private ArrayList<Entity> rendered_blocks = new ArrayList<Entity>();  // list of blocks that exist in the chunk and should be rendered
+	private Block[] chunkBlocks = new Block[1001];
+	private ArrayList<Entity> renderedEntities = new ArrayList<Entity>();  // list of all entities that exist in the chunk and should be rendered
+	
 	private int xStartCoord;
 	private int yStartCoord;
-	private int zStartCoord;	
+	private int zStartCoord;
+	public Vector3f position;	
 	private String chunkID; 
+	public boolean needsRender = true;
+	private int vaoID = -1;
 	
 	
 	public Chunk(int xCoord, int yCoord, int zCoord) {
 		this.xStartCoord = xCoord;
 		this.yStartCoord = yCoord;
 		this.zStartCoord = zCoord;
+		this.position = new Vector3f(xCoord, yCoord, zCoord);
 		this.setChunkID(xCoord + "-" + yCoord + "-" + zCoord);
 	}
 	
 	// this decides which blocks in the chunk should be rendered (to save resources)
 	public void chooseRenderedBlocks() {
-		rendered_blocks.clear();
-		for(Entity block : chunk_blocks) {
-			//if block is solid, check if it's completely surrounded with other blocks.
-			if(block.getEntityType().equals("solid")) {
-			   if(!isSolidBlockSurrounded(block)) {
-				   //if at least one face is visible, render the block
-				   rendered_blocks.add(block);
-			   }
-			//if block only consists of sides, check to see if blocks exist on each side
-			} else if (block.getEntityType().equals("sides")) {
-				if(!areSidesSurrounded(block)) {
-					//if at least one side face is visible, render the block
-					rendered_blocks.add(block);
-				}
-			//if block only consists of the top face, check to see if a block exists above
-			} else if (block.getEntityType().equals("top")) {
-				if(!isTopSurrounded(block)) {
-					//if the top face is visible, render the block
-					rendered_blocks.add(block);
-				}
-			//if the block only consists of the bottom face, check to see if a block exists below
-			} else if (block.getEntityType().equals("bottom")) {
-				if(!isBottomSurrounded(block)) {
-					//if the bottom face is visible, render the block
-					rendered_blocks.add(block);
-				}
-			}
-		}
-	}
-	
-	//checks to see if there exists an adjacent block on every face of the argument block
-	private boolean isSolidBlockSurrounded(Entity block) {
-		int faces_covered = 0;
-		
-		//2D array of every possible adjacent block (6 possible blocks)
-		float [][] adjacentBlocks = new float[][]{
-			{block.getPosition().x + 1, block.getPosition().y, block.getPosition().z},
-			{block.getPosition().x - 1, block.getPosition().y,  block.getPosition().z},
-			{block.getPosition().x, block.getPosition().y + 1, block.getPosition().z},
-			{block.getPosition().x, block.getPosition().y - 1, block.getPosition().z},
-			{block.getPosition().x, block.getPosition().y, block.getPosition().z + 1},
-			{block.getPosition().x, block.getPosition().y, block.getPosition().z - 1}	
-		};
-		
-		//for loop checks/counts how many of the faces are covered by an adjacent block
-		for(Entity chunkBlock : chunk_blocks) {
-			for (float[] b : adjacentBlocks) {
-				if(b[0] == chunkBlock.getPosition().x && b[1] == chunkBlock.getPosition().y && b[2] == chunkBlock.getPosition().z) {
-					if(chunkBlock.getEntityType().equals("sides") || chunkBlock.getEntityType().equals("solid")) {
-					   faces_covered += 1;
+		needsRender = false;
+		renderedEntities.clear();
+
+
+		List<Float> vert = new ArrayList<>();
+		List<Integer> ndx = new ArrayList<>();
+		List<Float> uv = new ArrayList<>();
+
+		for(Block block : chunkBlocks) {
+			if(block != null) {
+				if (checkForAdjacentBlocks(block)) {
+					switch(block.type) {
+					case 0:
+						new GrassBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 1:
+						new StoneBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 2:
+						new DirtBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 3:
+						new SandBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 4:
+						new OakTreeBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 5:
+						new OakLeafBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 6:
+						new BirchTreeBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 7:
+						new BirchLeafBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 8:
+						new JungleTreeBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 9:
+						new JungleLeafBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;
+					case 10:
+						new CactusBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						break;							
 					}
+					
 				}
 			}
 		}
+
+		Vector3f pos = position;
+		float[] vert_ = new float[vert.size()];
+		int[] ndx_ = new int[ndx.size()];
+		float[] uv_ = new float[uv.size()];
+
+		for (int i = 0; i < vert_.length; ++i) vert_[i] = vert.get(i);
+		for (int i = 0; i < ndx_.length; ++i) ndx_[i] = ndx.get(i);
+		for (int i = 0; i < uv_.length; ++i) uv_[i] = uv.get(i);
+
+		RawModel model = MainGame.loader1.loadToVAO(vert_, ndx_, uv_, vaoID);
+		vaoID = model.getVaoID();
+		ModelTexture texture = new ModelTexture(MainGame.loader1.loadTexture("blockSheet"));
+		TexturedModel texModel = new TexturedModel(model, texture);
+		renderedEntities.add(new Entity(texModel, pos, 0, 0, 0, 1));
+	}
 		
-		//if all faces are covered (6 total), the block shouldn't be rendered
-		if(faces_covered == 6) {
-			return true;
-		} else {
-			return false;
-		}
+
+	public boolean checkForAdjacentBlocks(Block block) {
+		return checkForAdjacentBlocks(block.getBlockPosition());
+	}
+
+	//check to see if the argument block is surrounded on each side
+	public static boolean checkForAdjacentBlocks(Vector3f blockPos) {	
+		int x = (int)blockPos.x;
+		int y = (int)blockPos.y;
+		int z = (int)blockPos.z;
+		boolean shouldRender =
+		!WorldGeneration.isBlockSolid(x-1, y  , z  ) ||
+		!WorldGeneration.isBlockSolid(x+1, y  , z  ) ||
+		!WorldGeneration.isBlockSolid(x  , y-1, z  ) ||
+		!WorldGeneration.isBlockSolid(x  , y+1, z  ) ||
+		!WorldGeneration.isBlockSolid(x  , y  , z-1) ||
+		!WorldGeneration.isBlockSolid(x  , y  , z+1);
+
+		return shouldRender;
+	}	
 		
+
+	public Block[] getChunkBlocks() {
+		return chunkBlocks;
+	}
+
+
+	public ArrayList<Entity> getRenderedEntities() {
+		return renderedEntities;
+	}
+
+
+	//when adding a block to a chunk, add it to the chunkBlocks array so it can be easily accessed based upon position
+	public void addToChunkBlocks(Block block) {		
+		chunkBlocks[determineArrayPosition(block.getBlockPosition().x, block.getBlockPosition().y, block.getBlockPosition().z)] = block;		
 	}
 	
-	//checks to see if there exists an adjacent block on each side of the argument block (which in this case only consists of sides)
-	private boolean areSidesSurrounded(Entity block) {
-		int faces_covered = 0;
+	
+	//uses simple algorithm to determine where to store the block object in the chunkBlocks array
+	public int determineArrayPosition(float x1, float y1, float z1) {
+		int x = (int) Math.abs(x1) % Chunk.chunkSize;
+		int z = (int) Math.abs(z1) % Chunk.chunkSize;
+		int y = (int) Math.abs(y1) % Chunk.chunkSize;
+		int arrayPos = (x * 100) + (z * 10) + (y);
 		
-		//2D array of every possible adjacent block (4 possible blocks)
-		float [][] adjacentBlocks = new float[][]{
-			{block.getPosition().x + 1, block.getPosition().y, block.getPosition().z},
-			{block.getPosition().x - 1, block.getPosition().y,  block.getPosition().z},
-			{block.getPosition().x, block.getPosition().y, block.getPosition().z + 1},
-			{block.getPosition().x, block.getPosition().y, block.getPosition().z - 1}
-		};
-		
-		//for loop checks/counts how many of the faces are covered by an adjacent block
-		for(Entity chunkBlock : chunk_blocks) {
-			for (float[] b : adjacentBlocks) {
-				if(b[0] == chunkBlock.getPosition().x && b[1] == chunkBlock.getPosition().y && b[2] == chunkBlock.getPosition().z) {
-					if(chunkBlock.getEntityType().equals("sides") || chunkBlock.getEntityType().equals("solid")) {
-					   faces_covered += 1;
-					}
-				}
-			}
-		}
-		
-		//if all sides are covered (4 total), the block shouldn't be rendered
-		if(faces_covered == 4) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	
-	//checks to see if there exists an adjacent block above the argument block 
-	private boolean isTopSurrounded(Entity block) {		
-		float [][] adjacentBlocks = new float[][]{			
-			{block.getPosition().x, block.getPosition().y + 1, block.getPosition().z}
-		};
-		for(Entity chunkBlock : chunk_blocks) {
-			for (float[] b : adjacentBlocks) {
-				if(b[0] == chunkBlock.getPosition().x && b[1] == chunkBlock.getPosition().y && b[2] == chunkBlock.getPosition().z) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	//checks to see if there exists an adjacent block below the argument block 
-	private boolean isBottomSurrounded(Entity block) {		
-		float [][] adjacentBlocks = new float[][]{			
-			{block.getPosition().x, block.getPosition().y - 1, block.getPosition().z}
-		};
-		for(Entity chunkBlock : chunk_blocks) {
-			for (float[] b : adjacentBlocks) {
-				if(b[0] == chunkBlock.getPosition().x && b[1] == chunkBlock.getPosition().y && b[2] == chunkBlock.getPosition().z) {					
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-
-
-	public ArrayList<Entity> getChunk_blocks() {
-		return chunk_blocks;
-	}
-
-
-	public ArrayList<Entity> getRendered_blocks() {
-		return rendered_blocks;
-	}
-
-
-	
-	public void addTo_chunk_blocks(Entity e) {
-		chunk_blocks.add(e);		
+		return arrayPos;		
 	}
 
 

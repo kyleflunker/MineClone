@@ -5,10 +5,12 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
 import Blocks.Chunk;
+import MineClone.*;
 
 public class Camera {
 	
-	static Vector3f position;
+	public static Vector3f position;
+	public static Vector3f normal;
 	static Vector3f chunkPosition = new Vector3f(0, 0, 0);
 	static boolean playerInNewChunk = true;
 	float rotX;
@@ -34,24 +36,30 @@ public class Camera {
 		} else {
 			moveAt = 0;
 		}
-		
-		if(Mouse.isGrabbed()) {
-		rotX += Mouse.getDY() * turn_speed;
-		rotY += Mouse.getDX() * turn_speed;	
+		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+			moveAt *= 5;
 		}
-		
-		float dx = (float) -(moveAt * Math.sin(Math.toRadians(rotY)));
-		float dy = (float) (moveAt * Math.sin(Math.toRadians(rotX)));
-		float dz = (float) (moveAt * Math.cos(Math.toRadians(rotY)));
+		if(Mouse.isGrabbed()) {
+			rotX -= Math.toRadians(Mouse.getDY() * turn_speed);
+			rotY += Math.toRadians(Mouse.getDX() * turn_speed);	
+		}
+
+		rotY += Math.PI / 2;
+		normal = new Vector3f(
+			(float)(Math.cos(rotY) * Math.cos(rotX)),
+			(float)(Math.sin(rotX)),
+			(float)(Math.sin(rotY) * Math.cos(rotX))
+			);
+		rotY -= Math.PI / 2;
+		float dx = moveAt * normal.x;
+		float dy = moveAt * normal.y;
+		float dz = moveAt * normal.z;
 		
 		position.x += dx;
 		position.y += dy;
 		position.z += dz;
 		
 		testIfPlayerIsInNewChunk();
-		
-		//System.out.println(getPosition().toString());
-		
 		
 	}
 
@@ -60,30 +68,30 @@ public class Camera {
 	}
 
 	public float getRotX() {
-		return rotX;
+		return (float)Math.toDegrees(rotX);
 	}
 
 	public float getRotY() {
-		return rotY;
+		return (float)Math.toDegrees(rotY);
 	}
 
 	public float getRotZ() {
-		return rotZ;
+		return (float)Math.toDegrees(rotZ);
 	}
 	
 	public void testIfPlayerIsInNewChunk() {
 		int posX = (int) Math.floor(Camera.getPosition().x / 10) * 10;
-		int posZ = (int) Math.floor(Camera.getPosition().z / 10) * 10;	
-		if(posX != chunkPosition.x || posZ != chunkPosition.z) {
+		int posZ = (int) Math.floor(Camera.getPosition().z / 10) * 10;
+		int posY = (int) Math.floor(Camera.getPosition().y / 10) * 10;
+		if(posX != chunkPosition.x || posZ != chunkPosition.z || posY != chunkPosition.y) {
 			playerInNewChunk = true;
 			
-			chunkPosition = new Vector3f(posX, position.y, posZ);			
+			chunkPosition = new Vector3f(posX, posY, posZ);			
 		}
 	}
 	
 	public static boolean isPlayerInNewChunk() {
 		if(playerInNewChunk) {
-		   System.out.println("Player is in new chunk.");	
 		   playerInNewChunk = false;	
 		   return true;
 		} else {
