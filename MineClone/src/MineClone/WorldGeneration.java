@@ -3,9 +3,7 @@ package MineClone;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import org.lwjgl.util.vector.Vector3f;
-
 import Blocks.DirtBlock;
 import Blocks.GrassBlock;
 import Blocks.StoneBlock;
@@ -16,6 +14,7 @@ import Tools.Noise;
 import Blocks.OakTreeBlock;
 import Blocks.OakLeafBlock;
 import java.util.Random;
+import Blocks.TreeSpawner;
 import Models.*; import Textures.*; import Entities.*; import Blocks.*;
 
 public class WorldGeneration {	
@@ -58,21 +57,23 @@ public class WorldGeneration {
 	
 	
 	public static void createNewChunk(int xPos, int yPos, int zPos) {
+
+		//these are the baselines for tree spawn rates
+		int treecheckmax = 80;
+		int treecheckmin = 0;
+		int treecheck = 0;
 		
-		int biomespawnermax = 70;
-		int biomespawnermin = 1;
-		Random num = new Random();
-		int biomecheck = num.nextInt((biomespawnermax - biomespawnermin) + 1) + biomespawnermin;
-		
-		if(biomecheck >= 60) {
-			//System.out.println("Forest Spawned");
-		}
-		
-		int treecheckmax = 30;
-		int treecheckmin = 1;
+		//2 spawns sand
+		int biomemax = 2;
+		//1 spawns grass
+		int biomemin = 1;
 		Random num2 = new Random();
-		int treecheck = num2.nextInt((treecheckmax - treecheckmin) + 1) + treecheckmin;
+		int biomecheck = num2.nextInt((biomemax - biomemin) + 1) + biomemin;
 		
+		//these are the baselines for cacti spawn rates
+		int cacticheckmax = 80;
+		int cacticheckmin = 0;
+		int cacticheck = 0;
 		
 		Noise height = new Noise(100, 14, 20, 3567);
 		Chunk blockChunk = new Chunk(xPos, yPos, zPos);
@@ -89,77 +90,32 @@ public class WorldGeneration {
 					float zVal = height.generateHeight(i, j);		
 				for(float k = yPos; k < yPos + 10; k++) {		
 					   
-					if(k == zVal) {
+					if(k == zVal && biomecheck == 1) {
 						// if top layer, add a grass block (block.type = 0)
-						blockChunk.addToChunkBlocks(new Block(new Vector3f(i, k , j), 0));	
-					} else if (k < zVal) {
+						blockChunk.addToChunkBlocks(new Block(new Vector3f(i, k , j), 0));
+						//determines if a tree spawns
+						Random num = new Random();
+						treecheck = num.nextInt((treecheckmax - treecheckmin) + 1) + treecheckmin;
+					} 
+					//spawns the tree
+					if(k == zVal && treecheck == 35 ) {
+						TreeSpawner x = new TreeSpawner(blockChunk, i, k, j, zVal);
+						
+					}
+					//checks if the biome is sand or not
+					if(k == zVal && biomecheck == 2) {
+						blockChunk.addToChunkBlocks(new Block(new Vector3f(i, k, j), 3));
+						Random num3 = new Random();
+						cacticheck = num3.nextInt((cacticheckmax - cacticheckmin) +1) + cacticheckmin;
+					}
+					//spawns in the cacti
+					if(k == zVal && cacticheck == 50) {
+						CactiSpawner x = new CactiSpawner(blockChunk, i, k, j, zVal);
+					}else if (k < zVal) {
 						// if k is below the top layer, add a stone block (block.type = 1)
 						blockChunk.addToChunkBlocks(new Block(new Vector3f(i, k , j), 1));
 					}
-				   
-				//increments a counter to spawn trees
-				treecheck++;
-				//determines if a forest biome spawns
-				if(biomecheck >= 60) {
-					treecheck = 0;
-					treecheck+=15;
-				}
 				
-				/*
-					if(treecheck == 30) {
-						//determines the height of the tree based on the random num generator above
-						float blockcounter = zVal+7;
-						for(float x = zVal; x <= blockcounter; x++) {
-							//creates the tree itself
-							new TreeBlock(loader, blockChunk, new Vector3f(i, x, j));
-							if(x == zVal+4 || x == zVal+5) {
-								for(int r = 0; r <= 2; r++) {
-								//Unfortunately each of these calls must be here in order to properly construct the leaves, but the method to not render the leaves that are hidden is still in effect
-								new LeafBlock(loader, blockChunk, new Vector3f(i-r, x, j));
-								new LeafBlock(loader, blockChunk, new Vector3f(i+r, x, j));
-								new LeafBlock(loader, blockChunk, new Vector3f(i-r, x, j-r));
-								new LeafBlock(loader, blockChunk, new Vector3f(i+r, x, j-r));
-								new LeafBlock(loader, blockChunk, new Vector3f(i+r, x, j+r));
-								new LeafBlock(loader, blockChunk, new Vector3f(i, x, j-r));
-								new LeafBlock(loader, blockChunk, new Vector3f(i, x, j+r));
-								new LeafBlock(loader, blockChunk, new Vector3f(i-r, x, j+r));
-								if(r == 2) {
-								new LeafBlock(loader, blockChunk, new Vector3f(i + (2*1/r), x, j + r));
-								new LeafBlock(loader, blockChunk, new Vector3f(i + (2*1/r), x, j - r));
-								new LeafBlock(loader, blockChunk, new Vector3f(i - (2*1/r), x, j + r));
-								new LeafBlock(loader, blockChunk, new Vector3f(i - (2*1/r), x, j - r));
-								new LeafBlock(loader, blockChunk, new Vector3f(i + r, x, j + (2*1/r)));
-								new LeafBlock(loader, blockChunk, new Vector3f(i + r, x, j - (2*1/r)));
-								new LeafBlock(loader, blockChunk, new Vector3f(i - r, x, j + (2*1/r)));
-								new LeafBlock(loader, blockChunk, new Vector3f(i - r, x, j - (2*1/r)));
-									}
-								}
-							}
-							//changes how many leaves spawn based on the height of the tree
-							if(x == zVal+6) {
-								for(int r = 0; r <= 1; r++) {
-									new LeafBlock(loader, blockChunk, new Vector3f(i-r, x, j));
-									new LeafBlock(loader, blockChunk, new Vector3f(i+r, x, j));
-									new LeafBlock(loader, blockChunk, new Vector3f(i-r, x, j-r));
-									new LeafBlock(loader, blockChunk, new Vector3f(i+r, x, j-r));
-									new LeafBlock(loader, blockChunk, new Vector3f(i+r, x, j+r));
-									new LeafBlock(loader, blockChunk, new Vector3f(i, x, j-r));
-									new LeafBlock(loader, blockChunk, new Vector3f(i, x, j+r));
-									new LeafBlock(loader, blockChunk, new Vector3f(i-r, x, j+r));
-								}
-							}
-							if(x == zVal+7) {
-								for(int r = 0; r <= 1; r++) {
-									new LeafBlock(loader, blockChunk, new Vector3f(i+r, x, j));
-									new LeafBlock(loader, blockChunk, new Vector3f(i, x, j-r));
-									new LeafBlock(loader, blockChunk, new Vector3f(i, x, j+r));
-									new LeafBlock(loader, blockChunk, new Vector3f(i-r, x, j));
-									new LeafBlock(loader, blockChunk, new Vector3f(i, x+1, j));
-								}
-							}
-						} 
-					}
-					*/
 				}
 			}
 		}
