@@ -2,6 +2,7 @@ package MineClone;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import org.lwjgl.util.vector.Vector3f;
 import Blocks.DirtBlock;
@@ -40,7 +41,7 @@ public class WorldGeneration {
 					   if(generatedChunks.containsKey(createChunkID(i, k, j))) {
 						   renderedChunks.add(generatedChunks.get(createChunkID(i, k, j)));  
 					   } else {
-						   createNewChunk(i, k, j); 
+						   createNewChunk(i, k, j);
 					   }				  
 				   
 				   }			   
@@ -83,8 +84,7 @@ public class WorldGeneration {
 		
 		generatedChunks.put(blockChunk.getChunkID(), blockChunk);
 		renderedChunks.add(blockChunk);	
-		
-
+		TreeSpawner x =  new TreeSpawner();
 		for(int i = xPos; i < xPos + 10; i++) {
 			for(int j = zPos; j < zPos + 10; j++) {				
 					float zVal = height.generateHeight(i, j);		
@@ -98,9 +98,8 @@ public class WorldGeneration {
 						treecheck = num.nextInt((treecheckmax - treecheckmin) + 1) + treecheckmin;
 					} 
 					//spawns the tree
-					if(k == zVal && treecheck == 35 ) {
-						TreeSpawner x = new TreeSpawner(blockChunk, i, k, j, zVal);
-						
+					if(k == zVal && treecheck == 35 && i < 8 ) {
+						x.TreeSpawnerMethod(blockChunk, i, k, j);
 					}
 					//checks if the biome is sand or not
 					if(k == zVal && biomecheck == 2) {
@@ -110,9 +109,10 @@ public class WorldGeneration {
 					}
 					//spawns in the cacti
 					if(k == zVal && cacticheck == 50) {
-						CactiSpawner x = new CactiSpawner(blockChunk, i, k, j, zVal);
-					}else if (k < zVal) {
-						// if k is below the top layer, add a stone block (block.type = 1)
+						CactiSpawner b = new CactiSpawner(blockChunk, i, k, j, zVal);
+					}
+				else if (k < zVal) {
+						 //if k is below the top layer, add a stone block (block.type = 1)
 						blockChunk.addToChunkBlocks(new Block(new Vector3f(i, k , j), 1));
 					}
 				
