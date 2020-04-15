@@ -76,7 +76,6 @@ public class WorldGeneration {
 		int cacticheckmin = 0;
 		int cacticheck = 0;
 		
-		System.out.println("Seed: " + MainGame.getSeed());
 		Noise height = new Noise(100, 14, 20, MainGame.getSeed());
 		Chunk blockChunk = new Chunk(xPos, yPos, zPos);
 		
