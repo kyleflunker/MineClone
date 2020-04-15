@@ -76,7 +76,8 @@ public class WorldGeneration {
 		int cacticheckmin = 0;
 		int cacticheck = 0;
 		
-		Noise height = new Noise(100, 14, 20, 3567);
+		System.out.println("Seed: " + MainGame.getSeed());
+		Noise height = new Noise(100, 14, 20, MainGame.getSeed());
 		Chunk blockChunk = new Chunk(xPos, yPos, zPos);
 		
 		//since a new chunk is being created, we must re-render its adjacent chunks (if they exist)
