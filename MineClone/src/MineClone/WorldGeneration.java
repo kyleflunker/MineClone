@@ -2,26 +2,26 @@ package MineClone;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import org.lwjgl.util.vector.Vector3f;
-import Blocks.DirtBlock;
-import Blocks.GrassBlock;
-import Blocks.StoneBlock;
 import Entities.Camera;
 import Blocks.Chunk;
-import RenderEngine.Loader;
 import Tools.Noise;
-import Blocks.OakTreeBlock;
-import Blocks.OakLeafBlock;
+import Tools.Vec3i;
+
 import java.util.Random;
 import Blocks.TreeSpawner;
-import Models.*; import Textures.*; import Entities.*; import Blocks.*;
+import Blocks.*;
 
 public class WorldGeneration {	
 	
 	public static HashMap<String, Chunk> generatedChunks = new HashMap<String, Chunk>();
 	private static ArrayList<Chunk> renderedChunks = new ArrayList<Chunk>();
+	public static List<Vec3i> needGenerate = new ArrayList<>();
+	private static int initialGeneration = -50;
+	public static boolean firstRun = true;
+	static TreeSpawner treeSpawner =  new TreeSpawner();
+	
 
 	public static void chunkController() {
 		//these position values will give you the chunk startX, startY, and startZ coordinates of the chunk the player is currently in
@@ -29,35 +29,140 @@ public class WorldGeneration {
 		int posZ = (int) Math.floor(Camera.getPosition().z / 10) * 10;
 		int posY = (int) Math.floor(Camera.getPosition().y / 10) * 10;
 
-		int renderDistance = 30;
+		int renderDistance = 100;
 		
-		//if the player is in a new chunk (since the last movement), render chunks relative to the chunk they're currently in
+		long millis = System.currentTimeMillis();		
+		renderedChunks.forEach(c -> c.tickUnload());
+		renderedChunks.removeIf(c -> c.unloaded);
+		
+		//if player is in a new chunk
 		if(Camera.isPlayerInNewChunk()) {
-		   renderedChunks.clear();
-		   for(int i = posX - renderDistance; i <= posX + renderDistance; i += 10) {
-			   for(int j = posZ - renderDistance; j <= posZ + renderDistance; j += 10) {
-				   for(int k = posY - renderDistance; k <= posY + renderDistance; k += 10) {
+		   long unloadFrame = System.currentTimeMillis();
+		   
+		   for (Chunk c : renderedChunks) c.unloadFrame = unloadFrame;
+		   
+			for (Chunk c : renderedChunks) {
+				if (
+						c.position.x < posX - renderDistance || c.position.x > posX + renderDistance ||
+						c.position.y < posY - renderDistance || c.position.y > posY + renderDistance ||
+						c.position.z < posZ - renderDistance || c.position.z > posZ + renderDistance) {
+					c.unloadChunk();
+				}
+			}
+			
+			renderedChunks.removeIf(c -> (!(
+						c.position.x < posX - renderDistance || c.position.x > posX + renderDistance ||
+						c.position.y < posY - renderDistance || c.position.y > posY + renderDistance ||
+						c.position.z < posZ - renderDistance || c.position.z > posZ + renderDistance
+			)));
+			
+		   needGenerate.clear();
+		   
+		   for(int i = posX - renderDistance - initialGeneration; i <= posX + renderDistance + initialGeneration; i += 10) {
+			   for(int j = posZ - renderDistance - initialGeneration; j <= posZ + renderDistance + initialGeneration; j += 10) {
+				   for(int k = posY - renderDistance - initialGeneration; k <= posY + renderDistance + initialGeneration; k += 10) {
 					   
 					   if(generatedChunks.containsKey(createChunkID(i, k, j))) {
-						   renderedChunks.add(generatedChunks.get(createChunkID(i, k, j)));  
+	
+							Chunk asd = generatedChunks.get(createChunkID(i, k, j));
+							asd.unloading = false;
+							asd.unloaded = false;
+						    renderedChunks.add(asd);  
+						    
 					   } else {
-						   createNewChunk(i, k, j);
+	
+						if (firstRun) {
+							   createNewChunk(i, k, j); 
+						} else {
+							   needGenerate.add(new Vec3i(i, k, j));
+						}
 					   }				  
 				   
 				   }			   
 			   }
 		   }
-		//for the chunks that should rendered, check to see if they need to re-choose renderedBlocks
-		for (Chunk chunk : generatedChunks.values()) {
-			if (chunk.needsRender)
-				chunk.chooseRenderedBlocks();
+	
+		   for (Chunk c : renderedChunks) {
+			if (c.unloadFrame != unloadFrame) {
+				c.needsPopIn = true; }
+		   }
 		}
+		
+		//the rest will run even if player isn't in new chunk
+		
+		if (firstRun) {
+			for (Chunk c : generatedChunks.values()) {
+				if (c.needsRender) {
+					c.chooseRenderedBlocks();
+					c.needsPopIn = false;
+				}
+			}
+			System.out.printf("generation time: %f\n", ((System.currentTimeMillis() - millis) / (double)1000));
+			firstRun = false;
 		}
+		
+		Vec3i bestP = null;
+		Chunk best = null;
+		float bestD = 999999999f;
+		
+		for (int qwerqwe = 0; qwerqwe < 2; ++qwerqwe) {
+			bestD = 99999999999f;
+			bestP = null;
+			List<Vec3i> forcedGen = new ArrayList<>();
+			for (Vec3i c : needGenerate) {
+				float lenSq = Vector3f.sub(c.pos, Camera.position, null).lengthSquared();
+				if (lenSq < 900) {
+					//System.out.println("FORCED CHUNK GEN");
+					createNewChunk(c.x,c.y,c.z).needsPopIn = false;
+					forcedGen.add(c);
+				} else if (lenSq < bestD) {
+				bestP = c;
+					bestD = lenSq;
+				}
+			}
+			
+			needGenerate.removeAll(forcedGen);
+			
+			if (bestP != null) {
+				//System.out.println("frame chunk gen");
+				needGenerate.remove(bestP);
+				createNewChunk(bestP.x, bestP.y, bestP.z);
+			} else break;
+		}
+		
+		for (int qwerqwe = 0; qwerqwe < 2; ++qwerqwe) {
+			bestD = 99999999999f;
+			best = null;
+			
+			for (Chunk c : renderedChunks) {
+				if (c.needsRender) {
+					float lenSq = Vector3f.sub(c.position, Camera.position, null).lengthSquared();
+					if (lenSq < 400) {
+						c.chooseRenderedBlocks();
+						c.needsPopIn = false;
+						//System.out.println("FORCED CHUNK RENDER");
+					} else if (lenSq < bestD) {
+						best = c;
+						bestD = lenSq;
+					}
+				}
+			}
+			
+			if (best != null) {
+				//System.out.println("frame chunk render");
+				best.chooseRenderedBlocks();
+			} else break;
+		
+		}
+	
+		initialGeneration = 0;
 		   
 	}	
+		   
+		
 	
 	
-	public static void createNewChunk(int xPos, int yPos, int zPos) {
+	public static Chunk createNewChunk(int xPos, int yPos, int zPos) {
 
 		//these are the baselines for tree spawn rates
 		int treecheckmax = 80;
@@ -76,18 +181,16 @@ public class WorldGeneration {
 		int cacticheckmin = 0;
 		int cacticheck = 0;
 		
-		Noise height = new Noise(100, 14, 20, MainGame.getSeed());
 		Chunk blockChunk = new Chunk(xPos, yPos, zPos);
+		blockChunk.needsPopIn = true;
 		
-		//since a new chunk is being created, we must re-render its adjacent chunks (if they exist)
-		setAdjacentChunksNeedRender(blockChunk);
 		
-		generatedChunks.put(blockChunk.getChunkID(), blockChunk);
-		renderedChunks.add(blockChunk);	
-		TreeSpawner x =  new TreeSpawner();
+		
+		
+		
 		for(int i = xPos; i < xPos + 10; i++) {
 			for(int j = zPos; j < zPos + 10; j++) {				
-					float zVal = height.generateHeight(i, j);		
+					float zVal = MainGame.noiseGenerator.generateHeight(i, j);		
 				for(float k = yPos; k < yPos + 10; k++) {		
 					   
 					if(k == zVal && biomecheck == 1) {
@@ -99,7 +202,7 @@ public class WorldGeneration {
 					} 
 					//spawns the tree
 					if(k == zVal && treecheck == 35 && i < 8 ) {
-						x.TreeSpawnerMethod(blockChunk, i, k, j);
+						treeSpawner.TreeSpawnerMethod(i, k, j);
 					}
 					//checks if the biome is sand or not
 					if(k == zVal && biomecheck == 2) {
@@ -120,6 +223,13 @@ public class WorldGeneration {
 			}
 		}
 		
+		generatedChunks.put(blockChunk.getChunkID(), blockChunk);
+		blockChunk.unloading = false;
+		blockChunk.unloaded = false;
+		renderedChunks.add(blockChunk);	
+		//since a new chunk is being created, we must re-render its adjacent chunks (if they exist)
+		setAdjacentChunksNeedRender(blockChunk);
+		return blockChunk;
 		
 	}
 	
@@ -170,4 +280,6 @@ public class WorldGeneration {
 
 	 
 }
+
+
 

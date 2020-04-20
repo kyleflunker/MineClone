@@ -2,17 +2,20 @@ package Entities;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import Blocks.Chunk;
 import Models.TexturedModel;
 
 public class Entity {
 	
+	private Chunk chunk;
 	public Vector3f position;
 	float rotX, rotY, rotZ;
 	float scale;
+	private long age = 0;
 	
 	TexturedModel model;
 	
-	public Entity(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+	public Entity(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale, Chunk chunk) {
 		
 		this.model = model;
 		this.position = position;
@@ -20,6 +23,7 @@ public class Entity {
 		this.rotY = rotY;
 		this.rotZ = rotZ;
 		this.scale = scale;
+		this.chunk = chunk;
 	}
 		
 	
@@ -73,6 +77,24 @@ public class Entity {
 	}
 	
 	public float getScale() {
+		if (chunk.unloaded) {
+			throw new Error();
+		}
+		if (chunk.unloading) {
+			long chunkAge = System.currentTimeMillis() - chunk.unloadTime;
+			return scale * (((1-(chunkAge / 1000f)) * (1-(chunkAge / 1000f))));
+		}
+		if (chunk.needsPopIn) {
+			chunk.needsPopIn = false;
+			age = System.currentTimeMillis();
+		}
+		if (age != 0) {
+			long chunkAge = System.currentTimeMillis() - age;
+			if (chunkAge < 1000) {
+				if (Vector3f.sub(Camera.position, position, null).lengthSquared() < 300) age = 0;
+				return scale * (1- ((1-(chunkAge / 1000f)) * (1-(chunkAge / 1000f))));
+			}
+		}
 		return scale;
 	}
 	

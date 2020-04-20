@@ -14,11 +14,16 @@ import Tools.Maths;
 
 public class EntityRenderer {
 	public static Vector3f temp = new Vector3f();
+	public static int FOV = 100;
+	
 	public static void render(Entity entity, StaticShader shader) {
-		Vector3f.sub(entity.position, Camera.position, temp);
-		temp.normalise();
-		float distance = Vector3f.dot(Camera.normal, temp);
-		if (Math.acos(distance) < Math.toRadians(180 - 90)) return;
+		Vector3f.sub(entity.position, Camera.position, temp);		
+		temp.x += 5; temp.y += 5; temp.z += 5;
+		if (temp.lengthSquared() > 5*5*3 * 1.732f) { 
+			temp.normalise();
+			float distance = Vector3f.dot(Camera.normal, temp);
+			if (acos(distance) < Math.toRadians(FOV)) return;
+		}
 
 		GL30.glBindVertexArray(entity.getModel().getModel().getVaoID());
 		GL20.glEnableVertexAttribArray(0);
@@ -35,5 +40,9 @@ public class EntityRenderer {
 		GL20.glDisableVertexAttribArray(1);
 		GL30.glBindVertexArray(0);
 	}
+	
+	private static double acos(double x) {
+		return (-0.69813170079773212 * x * x - 0.87266462599716477) * x + 1.5707963267948966;
+    }
 	
 }

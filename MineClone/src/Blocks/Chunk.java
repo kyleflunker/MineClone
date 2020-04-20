@@ -12,18 +12,21 @@ import Textures.ModelTexture;
 
 public class Chunk {
 	
-	public static int chunkSize = 10;	
-	
+	public static int chunkSize = 10;  // each chunk is 10x10x10	
 	private Block[] chunkBlocks = new Block[1001];
-	private ArrayList<Entity> renderedEntities = new ArrayList<Entity>();  // list of all entities that exist in the chunk and should be rendered
-	
+	private ArrayList<Entity> renderedEntities = new ArrayList<Entity>();  // list of all entities that exist in the chunk and should be rendered	
 	private int xStartCoord;
 	private int yStartCoord;
 	private int zStartCoord;
 	public Vector3f position;	
 	private String chunkID; 
 	public boolean needsRender = true;
-	private int vaoID = -1;
+	private int vaoID = -1;	
+	public long unloadFrame = 0;
+	public long unloadTime = 0;
+	public boolean unloading= false;
+	public boolean unloaded = false;
+	public boolean needsPopIn = false;
 	
 	
 	public Chunk(int xCoord, int yCoord, int zCoord) {
@@ -83,24 +86,29 @@ public class Chunk {
 						break;							
 					}
 					
-				}
+				} 
 			}
 		}
 
-		Vector3f pos = position;
-		float[] vert_ = new float[vert.size()];
-		int[] ndx_ = new int[ndx.size()];
-		float[] uv_ = new float[uv.size()];
+		if (ndx.size() > 0) {
+			
+	 		Vector3f pos = position;
+	 		float[] vert_ = new float[vert.size()];
+	 		int[] ndx_ = new int[ndx.size()];
+	 		float[] uv_ = new float[uv.size()];
 
-		for (int i = 0; i < vert_.length; ++i) vert_[i] = vert.get(i);
-		for (int i = 0; i < ndx_.length; ++i) ndx_[i] = ndx.get(i);
-		for (int i = 0; i < uv_.length; ++i) uv_[i] = uv.get(i);
+			for (int i = 0; i < vert_.length; ++i) vert_[i] = vert.get(i);
+			for (int i = 0; i < ndx_.length; ++i) ndx_[i] = ndx.get(i);
+			for (int i = 0; i < uv_.length; ++i) uv_[i] = uv.get(i);
 
-		RawModel model = MainGame.loader1.loadToVAO(vert_, ndx_, uv_, vaoID);
-		vaoID = model.getVaoID();
-		ModelTexture texture = new ModelTexture(MainGame.loader1.loadTexture("blockSheet"));
-		TexturedModel texModel = new TexturedModel(model, texture);
-		renderedEntities.add(new Entity(texModel, pos, 0, 0, 0, 1));
+			RawModel model = MainGame.loader1.loadToVAO(vert_, ndx_, uv_, vaoID);
+	 		vaoID = model.getVaoID();
+	 		ModelTexture texture = new ModelTexture(MainGame.loader1.loadTexture("blockSheet"));
+	 		TexturedModel texModel = new TexturedModel(model, texture);
+	
+			renderedEntities.add(new Entity(texModel, pos, 0.0f, 0.0f, 0.0f, 1.0f, this));			 		
+			
+		}
 	}
 		
 
@@ -149,6 +157,19 @@ public class Chunk {
 		int arrayPos = (x * 100) + (z * 10) + (y);
 		
 		return arrayPos;		
+	}	
+	
+	
+	public void unloadChunk() {
+		if (unloading || unloaded) return;
+			unloading = true;
+			unloaded = false;
+			unloadTime = System.currentTimeMillis();
+		}
+	
+	public void tickUnload() {
+		if (!unloading) return;
+		if (System.currentTimeMillis() - unloadTime > 1000) { unloading = false; unloaded = true; }
 	}
 
 

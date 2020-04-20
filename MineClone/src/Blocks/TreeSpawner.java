@@ -9,12 +9,14 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector3f;
 import Blocks.OakTreeBlock;
 import Blocks.OakLeafBlock; 
-import Models.*; import Textures.*; import Entities.*; import Blocks.*;
+import Models.*; import Textures.*;
+import Tools.Vec3i;
+import Entities.*; import Blocks.*;
 
 
 public class TreeSpawner {	
 	
-	public void TreeSpawnerMethod(Chunk blockChunk, int i, float k, int j) {
+	public void TreeSpawnerMethod(int i, float k, int j) {
 		
 		int x = 1;
 		while(x <= 7) {
@@ -76,8 +78,8 @@ public class TreeSpawner {
 		int chunkPosY = (int) Math.floor(position.y / 10) * 10;
 		if(WorldGeneration.getGeneratedChunks().containsKey(WorldGeneration.createChunkID(chunkPosX, chunkPosY, chunkPosZ))) {
 			Chunk chunk = WorldGeneration.getGeneratedChunks().get(WorldGeneration.createChunkID(chunkPosX, chunkPosY, chunkPosZ));
-			addBlockToCorrectChunk(position, blockType, chunk);     
-		   } else {
+			addBlockToCorrectChunk(position, blockType, chunk); 
+		   } else {	
 			   WorldGeneration.createNewChunk(chunkPosX, chunkPosY, chunkPosZ);
 			   Chunk chunk = WorldGeneration.getGeneratedChunks().get(WorldGeneration.createChunkID(chunkPosX, chunkPosY, chunkPosZ));
 			   addBlockToCorrectChunk(position, blockType, chunk);  
