@@ -1,15 +1,13 @@
 package MineClone;
 
 import java.io.IOException;
+import java.util.Random;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.vector.Vector3f;
-
 import Blocks.Chunk;
-import Blocks.GeneratedBlocks;
 import Entities.Camera;
 import Entities.Entity;
 import RenderEngine.DisplayManager;
@@ -17,12 +15,10 @@ import RenderEngine.Loader;
 import RenderEngine.MasterRenderer;
 import Shaders.StaticShader;
 import Tools.Noise;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -31,7 +27,6 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 import javax.swing.*;
 
 public class MainGame {
@@ -133,10 +128,16 @@ public class MainGame {
         playButton.addActionListener(new ActionListener()
         {
           @Override
-          public void actionPerformed(ActionEvent b) {        	  
-	         seedInteger = Integer.parseInt(seedInputField.getText());
-	         noiseGenerator = new Noise(100, 14, 20, MainGame.getSeed());  
-	         startGameWindow();
+          public void actionPerformed(ActionEvent b) {
+        	  //if player hasn't entered a seed to use, then set a random seed
+        	  if(seedInputField.getText().isEmpty()) {
+        		  Random random = new Random();
+        		  seedInteger = random.nextInt(999999);
+        	  } else {
+        		  seedInteger = Integer.parseInt(seedInputField.getText());
+        	  }
+        	  noiseGenerator = new Noise(100, 14, 20, MainGame.getSeed());  
+        	  startGameWindow();
           }
         });
         

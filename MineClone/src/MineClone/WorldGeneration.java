@@ -162,8 +162,7 @@ public class WorldGeneration {
 		
 	
 	
-	public static Chunk createNewChunk(int xPos, int yPos, int zPos) {
-					
+	public static Chunk createNewChunk(int xPos, int yPos, int zPos) {					
 		
 		//these are the baselines for tree spawn rates
 		int treecheckmax = 80;
@@ -186,6 +185,7 @@ public class WorldGeneration {
 		
 		//we don't want to create a chunk if it's already been created
 		if (generatedChunks.containsKey(newChunk.getChunkID())) {
+			System.out.println("caught duplicated chunk");
 			return generatedChunks.get(newChunk.getChunkID()); 
 	    }
 		
@@ -200,10 +200,11 @@ public class WorldGeneration {
 		//populate the chunk with blocks
 		for(int x = xPos; x < xPos + 10; x++) {
 			for(int z = zPos; z < zPos + 10; z++) {	
+				float noiseHeightValue = MainGame.noiseGenerator.generateHeight(x, z);
 				for(float y = yPos; y < yPos + 10; y++) {	
 					
 					Random random = new Random();
-					float noiseHeightValue = MainGame.noiseGenerator.generateHeight(x, z);
+					
 					
 					// if on the top layer of the chunk and the biome is grassland
 					if(y == noiseHeightValue && biomecheck == 1) {
