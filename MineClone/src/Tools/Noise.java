@@ -6,7 +6,7 @@ public class Noise {
 
   	public static float AMPLITUDE = 80f;
     public static int OCTAVES = 7;
-    public static float ROUGHNESS = 0.3f;
+    public static float ROUGHNESS = .3f;
  
     private Random random = new Random();
     private int seed;

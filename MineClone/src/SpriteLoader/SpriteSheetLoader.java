@@ -87,26 +87,26 @@ public class SpriteSheetLoader {
 	
 	
 	public static float getRightXTexCoord(float texPosX) {
-		float rightX = ((textureSize * texPosX) / spriteSheetWidth);
+		float rightX = (float) (((textureSize * texPosX) / spriteSheetWidth) - .001);
 		return rightX;
 	}
 	
 	public static float getTopYTexCoord(float texPosY) {
-		BigDecimal test = BigDecimal.valueOf((textureSize * texPosY) / spriteSheetHeight);
+		BigDecimal test = BigDecimal.valueOf(((textureSize * texPosY) / spriteSheetHeight) + .001);
 		BigDecimal test1 = BigDecimal.valueOf(textureSize / spriteSheetHeight);
 		float topY = test.subtract(test1).floatValue();
     return topY;
 	}	
 	
 	public static float getLeftXTexCoord(float texPosX) {
-		 BigDecimal test = BigDecimal.valueOf((textureSize * texPosX) / spriteSheetWidth);
+		 BigDecimal test = BigDecimal.valueOf(((textureSize * texPosX) / spriteSheetWidth) + .001);
 		 BigDecimal test1 = BigDecimal.valueOf(textureSize / spriteSheetWidth);
 		float leftX = test.subtract(test1).floatValue();
 		return leftX;
 	}
 	
 	public static float getBottomYTexCoord(float texPosY) {
-		float bottomY = (textureSize * texPosY) / spriteSheetHeight;
+		float bottomY = (float) (((textureSize * texPosY) / spriteSheetHeight) - .001);
 		return bottomY;
 	}	
 		

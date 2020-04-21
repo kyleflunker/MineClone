@@ -103,6 +103,10 @@ public class Camera {
 			Vector3f.add(position, moveVec, position);
 		}
 		
+		if(Keyboard.isKeyDown(Keyboard.KEY_F)) {
+			
+		}
+		
 		testIfPlayerIsInNewChunk();
 		
 	}
