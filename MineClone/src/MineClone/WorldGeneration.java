@@ -7,9 +7,11 @@ import org.lwjgl.util.vector.Vector3f;
 
 import BlockObjects.CactiSpawner;
 import BlockObjects.OakTreeSpawner;
+import BlockObjects.BirchTreeSpawner;
 import Entities.Camera;
 import Tools.Noise;
 import Tools.Vec3i;
+import java.util.Stack;
 
 import java.util.Random;
 
@@ -25,6 +27,9 @@ public class WorldGeneration {
 	public static boolean firstRun = true;
 	private static OakTreeSpawner oakTreeSpawner =  new OakTreeSpawner();
 	private static CactiSpawner cactiSpawner = new CactiSpawner();
+	private static BirchTreeSpawner birchTreeSpawner = new BirchTreeSpawner();
+	public static boolean woods = true;
+	static Stack<Integer> stack = new Stack<Integer>();
 	
 
 	public static void chunkController() {
@@ -32,11 +37,11 @@ public class WorldGeneration {
 		int posX = (int) Math.floor(Camera.getPosition().x / 10) * 10;
 		int posZ = (int) Math.floor(Camera.getPosition().z / 10) * 10;
 		int posY = (int) Math.floor(Camera.getPosition().y / 10) * 10;
-		
 		long millis = System.currentTimeMillis();		
 		
 		renderedChunks.forEach(c -> c.tickUnload());
 		renderedChunks.removeIf(c -> c.unloaded);
+		
 		
 		//if player is in a new chunk
 		if(Camera.isPlayerInNewChunk()) {
@@ -75,7 +80,8 @@ public class WorldGeneration {
 						    
 					   } else {	
 							if (firstRun) {
-								createNewChunk(x, y, z); 
+								createNewChunk(x, y, z);
+								
 							} else {
 								needGenerate.add(new Vec3i(x, y, z));
 							}
@@ -156,30 +162,28 @@ public class WorldGeneration {
 		}
 	
 		initialGeneration = 0;
-		   
 	}	
+	
 		   
 		
 	
 	
 	public static Chunk createNewChunk(int xPos, int yPos, int zPos) {					
 		
+		Random random = new Random();
 		//these are the baselines for tree spawn rates
 		int treecheckmax = 80;
 		int treecheckmin = 0;
 		int treecheck = 0;
+		int counter = 0;
 		
-		//2 spawns sand
-		int biomemax = 2;
-		//1 spawns grass
-		int biomemin = 1;
-		Random num2 = new Random();
-		int biomecheck = num2.nextInt((biomemax - biomemin) + 1) + biomemin;
-		
+		int deepforest;
+		deepforest = random.nextInt(100);
 		//these are the baselines for cacti spawn rates
 		int cacticheckmax = 80;
 		int cacticheckmin = 0;
 		int cacticheck = 0;
+		
 		
 		Chunk newChunk = new Chunk(xPos, yPos, zPos);		
 		
@@ -203,31 +207,47 @@ public class WorldGeneration {
 				float noiseHeightValue = MainGame.noiseGenerator.generateHeight(x, z);
 				for(float y = yPos; y < yPos + 10; y++) {	
 					
-					Random random = new Random();
-					
+					Random random2 = new Random();
 					
 					// if on the top layer of the chunk and the biome is grassland
-					if(y == noiseHeightValue && biomecheck == 1) {
+					if(y == noiseHeightValue && woods == true) {
 						// add a grass block
 						newChunk.addToChunkBlocks(new Block(new Vector3f(x, y , z), 0));
 						//determines if a tree spawns						
-						treecheck = random.nextInt((treecheckmax - treecheckmin) + 1) + treecheckmin;
-					} 
+						treecheck = random2.nextInt(50);
+						if(deepforest >= 90) {
+							if(y == noiseHeightValue && treecheck == 15 || y == noiseHeightValue && treecheck == 20) {
+								oakTreeSpawner.spawnOakTree(x, y, z);	
+							}
+							if(y == noiseHeightValue && treecheck == 30) {
+								birchTreeSpawner.spawnBirchTree(x, y, z);
+							}
+						}
+						if(deepforest > 30 && deepforest < 90) {
+							if(y == noiseHeightValue && treecheck == 30) {
+								oakTreeSpawner.spawnOakTree(x, y, z);	
+							}
+							if(y == noiseHeightValue && treecheck == 40) {
+								birchTreeSpawner.spawnBirchTree(x, y, z);
+							}
+						}
+				} 
 					
-					//if on the top layer of the chunk and a tree should spawn
-					if(y == noiseHeightValue && treecheck == 35) {
-						oakTreeSpawner.spawnOakTree(x, y, z);
-					}
-					
+
 					// if on the top layer of the chunk and the biome is desert
-					if(y == noiseHeightValue && biomecheck == 2) {
+					if(y == noiseHeightValue && woods == false) {
 						newChunk.addToChunkBlocks(new Block(new Vector3f(x, y, z), 3));
+		
 						cacticheck = random.nextInt((cacticheckmax - cacticheckmin) +1) + cacticheckmin;
-					}
-					
-					// if on the top layer of the chunk and a cactus should spawn
-					if(y == noiseHeightValue && cacticheck == 50) {
-						cactiSpawner.spawnCacti(x, y, z);
+						
+						
+						if(y == noiseHeightValue && cacticheck == 50) {
+							cactiSpawner.spawnCacti(x, y, z);
+							cacticheck = random.nextInt(50);
+							if(cacticheck== 49) {
+								woods = true;
+							}
+						}
 					}
 					
 					// if below the top layer of the world, spawn stone
@@ -237,13 +257,20 @@ public class WorldGeneration {
 				
 				}
 			}
+			stack.push(counter);
+			if(stack.size() == 20000) {
+				woods = false;
+			}
+			if(stack.size() >= 30000) {
+				woods = true;
+				stack.clear();
+			}
 		}
 			
 		renderedChunks.add(newChunk);	
 		//since a new chunk is being created, we must re-render its adjacent chunks (if they exist)
 		setAdjacentChunksNeedRender(newChunk);
 		return newChunk;
-		
 	}
 	
 	// this is used to create a chunkID which is used for the key when checking for a chunk in the HashMap
