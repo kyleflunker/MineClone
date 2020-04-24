@@ -189,7 +189,6 @@ public class WorldGeneration {
 		
 		//we don't want to create a chunk if it's already been created
 		if (generatedChunks.containsKey(newChunk.getChunkID())) {
-			System.out.println("caught duplicated chunk");
 			return generatedChunks.get(newChunk.getChunkID()); 
 	    }
 		
