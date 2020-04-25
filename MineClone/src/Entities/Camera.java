@@ -4,6 +4,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 import Entities.PlayerHand;
+import Blocks.Block;
 import Blocks.Chunk;
 import MineClone.*;
 import Tools.Noise;
@@ -26,6 +27,7 @@ public class Camera {
 	float turn_speed = .1f;
 	float moveAt = 0;
 	private static float targetY = 0;
+	private long lastTimePlacedOrDestroyed = 0;
 	
 	public Camera(Vector3f position, float rotX, float rotY, float rotZ) {
 		this.position = position;
@@ -36,6 +38,50 @@ public class Camera {
 	}
 	
 	public void move() {
+		
+		if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
+			Vector3f oldRayVec = new Vector3f(position);
+			Vector3f rayVec = new Vector3f(position);
+			Vector3f incVec = (Vector3f) new Vector3f(normal).scale(-1/100f);
+			for (int i = 0; i < 700; i++) {
+				rayVec = Vector3f.add(incVec,  rayVec, null);
+				int x = (int) rayVec.getX();
+				int y = (int) rayVec.getY();
+				int z = (int) rayVec.getZ();
+				int ox = (int) oldRayVec.getX();
+				int oy = (int) oldRayVec.getY();
+				int oz = (int) oldRayVec.getZ();
+				if (x != ox || y != oy || z != oz) {
+					if (WorldGeneration.isBlockSolid(x, y, z)) {
+						if(System.currentTimeMillis() - lastTimePlacedOrDestroyed > 400) {							
+							if (Mouse.isButtonDown(0)) {
+								Chunk c = WorldGeneration.getGeneratedChunks().get(WorldGeneration.createChunkID(
+										(int) Math.floor(x / 10f) * 10,
+										(int) Math.floor(y / 10f) * 10,
+										(int) Math.floor(z / 10f) * 10));
+								c.getChunkBlocks()[c.determineArrayPosition(x, y, z)] = null;
+								c.chooseRenderedBlocks();
+								WorldGeneration.setAdjacentChunksNeedRender(c);
+							} else {
+								Chunk c = WorldGeneration.getGeneratedChunks().get(WorldGeneration.createChunkID(
+										(int) Math.floor(ox / 10f) * 10,
+										(int) Math.floor(oy / 10f) * 10,
+										(int) Math.floor(oz / 10f) * 10));
+								c.addToChunkBlocks(new Block(new Vector3f(ox, oy, oz), PlayerHand.getSelectedBlock()));
+								c.chooseRenderedBlocks();
+								WorldGeneration.setAdjacentChunksNeedRender(c);
+							}							
+							lastTimePlacedOrDestroyed = System.currentTimeMillis();
+							break;
+						}
+					}
+				}
+				oldRayVec = rayVec;
+			}
+			 
+			
+		}
+		
 		float horizMove = 0;
 		float vertMove = 0;
 		
@@ -105,7 +151,8 @@ public class Camera {
 		
 		testIfPlayerIsInNewChunk();
 		
-	}
+	}	
+	
 
 	public static Vector3f getPosition() {
 		return position;

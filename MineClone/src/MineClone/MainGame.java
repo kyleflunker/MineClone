@@ -186,7 +186,7 @@ public class MainGame {
 		        
 		              
 		        Camera camera = new Camera(new Vector3f(5, noiseGenerator.generateHeight(5, 5) + 10, 5), 0 ,0, 0);
-		        PlayerHand playerHand = new PlayerHand(new Vector3f(Camera.getPosition().x,Camera.getPosition().y, Camera.getPosition().z), 0.0f, 20f, 0.0f, .36f, true);
+		        PlayerHand playerHand = new PlayerHand(new Vector3f(Camera.getPosition().x,Camera.getPosition().y, Camera.getPosition().z), 0.0f, 20f, 0.0f, .36f, true);		      
 		        
 		        Mouse.setGrabbed(true);
 		        
@@ -199,6 +199,9 @@ public class MainGame {
 			        playerHand.checkForInput();
 			        renderer.prepare();
 			        shader.start();
+			        
+			        shader.loadViewMatrix(playerHand.getPlayerCrosshair());
+			        renderer.render(playerHand.getPlayerCrosshair(), shader);
 			        
 			        shader.loadViewMatrix(playerHand.getPlayerHand().get(0));
 			        

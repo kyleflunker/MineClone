@@ -13,6 +13,7 @@ public class Entity {
 	float scale;
 	private long age = 0;
 	private boolean staticEntity = false;
+	private String specialEntity = " ";
 	
 	TexturedModel model;
 	
@@ -27,7 +28,7 @@ public class Entity {
 		this.chunk = chunk;
 	}
 	
-	public Entity(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale, boolean staticEntity) {
+	public Entity(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale, boolean staticEntity, String specialEntity) {
 		
 		this.model = model;
 		this.position = position;
@@ -36,6 +37,7 @@ public class Entity {
 		this.rotZ = rotZ;
 		this.scale = scale;
 		this.staticEntity = staticEntity;
+		this.specialEntity = specialEntity;
 	}
 		
 	
@@ -129,5 +131,8 @@ public class Entity {
 		return staticEntity;
 	}
 	
-
+	public String getSpecialEntity() {
+		return specialEntity;
+	}
+	
 }

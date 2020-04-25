@@ -46,9 +46,11 @@ public class Maths {
 		Matrix4f.rotate((float) Math.toRadians(entity.getRotY()), new Vector3f(0, 1 , 0), matrix, matrix);
 		Matrix4f.rotate((float) Math.toRadians(entity.getRotZ()), new Vector3f(0, 0 , 1), matrix, matrix);
 		Matrix4f.translate(new Vector3f(-entity.getPosition().x, -entity.getPosition().y, -entity.getPosition().z ), matrix, matrix);
-		if(entity.isStaticEntity()) {
+		if(entity.getSpecialEntity().equals("hand")) {			
 			Matrix4f.translate(new Vector3f(.7f, -.4f, -.5f), matrix, matrix);
-		}
+		} else if(entity.getSpecialEntity().equals("crosshair")) {			
+			Matrix4f.translate(new Vector3f(0, 0, -.5f), matrix, matrix);
+		} 
 		
 		return matrix;		
 		
