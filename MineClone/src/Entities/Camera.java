@@ -3,7 +3,7 @@ package Entities;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
-
+import Entities.PlayerHand;
 import Blocks.Chunk;
 import MineClone.*;
 import Tools.Noise;
@@ -101,10 +101,6 @@ public class Camera {
 				moveVec.scale(5);
 			}
 			Vector3f.add(position, moveVec, position);
-		}
-		
-		if(Keyboard.isKeyDown(Keyboard.KEY_F)) {
-			
 		}
 		
 		testIfPlayerIsInNewChunk();

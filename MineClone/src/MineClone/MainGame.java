@@ -2,7 +2,6 @@ package MineClone;
 
 import java.io.IOException;
 import java.util.Random;
-
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -10,6 +9,7 @@ import org.lwjgl.util.vector.Vector3f;
 import Blocks.Chunk;
 import Entities.Camera;
 import Entities.Entity;
+import Entities.PlayerHand;
 import RenderEngine.DisplayManager;
 import RenderEngine.Loader;
 import RenderEngine.MasterRenderer;
@@ -186,18 +186,28 @@ public class MainGame {
 		        
 		              
 		        Camera camera = new Camera(new Vector3f(5, noiseGenerator.generateHeight(5, 5) + 10, 5), 0 ,0, 0);
+		        PlayerHand playerHand = new PlayerHand(new Vector3f(Camera.getPosition().x,Camera.getPosition().y, Camera.getPosition().z), 0.0f, 20f, 0.0f, .36f, true);
 		        
 		        Mouse.setGrabbed(true);
 		        
 		        long millis = System.currentTimeMillis();
 		        long frames = 0;
-		
+		        
+		       
 		        while(isRunning) {
 			        camera.move(); 
+			        playerHand.checkForInput();
 			        renderer.prepare();
 			        shader.start();
-			        shader.loadViewMatrix(camera);
 			        
+			        shader.loadViewMatrix(playerHand.getPlayerHand().get(0));
+			        
+			        for(Entity playerHandEntity : playerHand.getPlayerHand()) {
+			        	renderer.render(playerHandEntity, shader);
+			        }
+			        
+			        shader.loadViewMatrix(camera);
+			        			        
 			        for (Chunk chunks : WorldGeneration.getRenderedChunks()) {
 				        for(Entity entity : chunks.getRenderedEntities()) {
 				        	renderer.render(entity, shader); 

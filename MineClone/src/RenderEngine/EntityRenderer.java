@@ -17,12 +17,14 @@ public class EntityRenderer {
 	public static int FOV = 100;
 	
 	public static void render(Entity entity, StaticShader shader) {
-		Vector3f.sub(entity.position, Camera.position, temp);		
-		temp.x += 5; temp.y += 5; temp.z += 5;
-		if (temp.lengthSquared() > 5*5*3 * 1.732f) { 
-			temp.normalise();
-			float distance = Vector3f.dot(Camera.normal, temp);
-			if (acos(distance) < Math.toRadians(FOV)) return;
+		if(!entity.isStaticEntity()) {
+			Vector3f.sub(entity.position, Camera.position, temp);		
+			temp.x += 5; temp.y += 5; temp.z += 5;
+			if (temp.lengthSquared() > 5*5*3 * 1.732f) { 
+				temp.normalise();
+				float distance = Vector3f.dot(Camera.normal, temp);
+				if (acos(distance) < Math.toRadians(FOV)) return;
+			}
 		}
 
 		GL30.glBindVertexArray(entity.getModel().getModel().getVaoID());

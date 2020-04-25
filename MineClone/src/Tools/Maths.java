@@ -4,6 +4,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import Entities.Camera;
+import Entities.Entity;
 
 public class Maths {
 	
@@ -22,7 +23,7 @@ public class Maths {
 		
 	}
 	
-public static Matrix4f createViewMatrix(Camera camera) {
+	public static Matrix4f createViewMatrix(Camera camera) {
 		
 		Matrix4f matrix = new Matrix4f(); ;
 		matrix.setIdentity();	    
@@ -31,6 +32,23 @@ public static Matrix4f createViewMatrix(Camera camera) {
 		Matrix4f.rotate((float) Math.toRadians(camera.getRotY()), new Vector3f(0, 1 , 0), matrix, matrix);
 		Matrix4f.rotate((float) Math.toRadians(camera.getRotZ()), new Vector3f(0, 0 , 1), matrix, matrix);
 		Matrix4f.translate(new Vector3f(-camera.getPosition().x, -camera.getPosition().y, -camera.getPosition().z ), matrix, matrix);
+		
+		return matrix;		
+		
+	}
+	
+	public static Matrix4f createViewMatrix(Entity entity) {
+		
+		Matrix4f matrix = new Matrix4f(); ;
+		matrix.setIdentity();	    
+		
+		Matrix4f.rotate((float) Math.toRadians(entity.getRotX()), new Vector3f(1, 0 , 0), matrix, matrix);
+		Matrix4f.rotate((float) Math.toRadians(entity.getRotY()), new Vector3f(0, 1 , 0), matrix, matrix);
+		Matrix4f.rotate((float) Math.toRadians(entity.getRotZ()), new Vector3f(0, 0 , 1), matrix, matrix);
+		Matrix4f.translate(new Vector3f(-entity.getPosition().x, -entity.getPosition().y, -entity.getPosition().z ), matrix, matrix);
+		if(entity.isStaticEntity()) {
+			Matrix4f.translate(new Vector3f(.7f, -.4f, -.5f), matrix, matrix);
+		}
 		
 		return matrix;		
 		

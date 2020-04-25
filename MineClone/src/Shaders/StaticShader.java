@@ -3,6 +3,7 @@ package Shaders;
 import org.lwjgl.util.vector.Matrix4f;
 
 import Entities.Camera;
+import Entities.Entity;
 import Tools.Maths;
 
 public class StaticShader extends ShaderProgram{
@@ -46,6 +47,10 @@ public class StaticShader extends ShaderProgram{
 	
 	public void loadViewMatrix(Camera camera) {
 		super.loadMatrix(location_viewMatrix, Maths.createViewMatrix(camera));		
+	}
+	
+	public void loadViewMatrix(Entity entity) {
+		super.loadMatrix(location_viewMatrix, Maths.createViewMatrix(entity));		
 	}
 	
 	

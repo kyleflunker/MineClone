@@ -12,6 +12,7 @@ public class Entity {
 	float rotX, rotY, rotZ;
 	float scale;
 	private long age = 0;
+	private boolean staticEntity = false;
 	
 	TexturedModel model;
 	
@@ -24,6 +25,17 @@ public class Entity {
 		this.rotZ = rotZ;
 		this.scale = scale;
 		this.chunk = chunk;
+	}
+	
+	public Entity(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale, boolean staticEntity) {
+		
+		this.model = model;
+		this.position = position;
+		this.rotX = rotX;
+		this.rotY = rotY;
+		this.rotZ = rotZ;
+		this.scale = scale;
+		this.staticEntity = staticEntity;
 	}
 		
 	
@@ -77,6 +89,9 @@ public class Entity {
 	}
 	
 	public float getScale() {
+		if (staticEntity) {
+			return scale;
+		}
 		if (chunk.unloaded) {
 			throw new Error();
 		}
@@ -108,6 +123,10 @@ public class Entity {
 	
 	public void setModel(TexturedModel model) {
 		this.model = model;
+	}
+	
+	public boolean isStaticEntity() {
+		return staticEntity;
 	}
 	
 
