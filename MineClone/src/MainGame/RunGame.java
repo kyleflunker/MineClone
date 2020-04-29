@@ -75,28 +75,28 @@ public class RunGame {
         
         JLabel seedInputLabel = new JLabel();
         seedInputLabel.setText("Enter Seed Number:");
-        seedInputLabel.setPreferredSize(new Dimension(500,80));
-        seedInputLabel.setForeground(new Color(186, 176, 171));
-        seedInputLabel.setFont(new Font("Dialog", Font.BOLD,40));
+        seedInputLabel.setPreferredSize(new Dimension(600,80));
+        seedInputLabel.setForeground(new Color(68, 68, 68));
+        seedInputLabel.setFont(new Font("Dialog", Font.BOLD,60));
         titleScreenPane.add(seedInputLabel);
-        titleLayout.putConstraint(SpringLayout.WEST, seedInputLabel, 600, SpringLayout.WEST, titleScreenPane);
-        titleLayout.putConstraint(SpringLayout.NORTH, seedInputLabel, 650, SpringLayout.NORTH, titleScreenPane);
+        titleLayout.putConstraint(SpringLayout.WEST, seedInputLabel, ((screenSize.width / 2) - 450), SpringLayout.WEST, titleScreenPane);
+        titleLayout.putConstraint(SpringLayout.NORTH, seedInputLabel, ((screenSize.height / 2) + 550), SpringLayout.NORTH, titleScreenPane);
         
         JLabel seedLabel = new JLabel();
         seedLabel.setText("");
         seedLabel.setPreferredSize(new Dimension(400,70));
-        seedLabel.setForeground(new Color(186, 176, 171));
+        seedInputLabel.setForeground(new Color(68, 68, 68));
         seedLabel.setFont(new Font("Dialog", Font.PLAIN, 30));
         titleScreenPane.add(seedLabel);
-        titleLayout.putConstraint(SpringLayout.WEST, seedLabel, 1000, SpringLayout.WEST, titleScreenPane);
-        titleLayout.putConstraint(SpringLayout.NORTH, seedLabel, 720, SpringLayout.NORTH, titleScreenPane);   
+        titleLayout.putConstraint(SpringLayout.WEST, seedLabel, ((screenSize.width / 2) + 135), SpringLayout.WEST, titleScreenPane);
+        titleLayout.putConstraint(SpringLayout.NORTH, seedLabel, ((screenSize.height / 2) + 650), SpringLayout.NORTH, titleScreenPane);   
         
         JTextField seedInputField = new JTextField();
         seedInputField.setPreferredSize(new Dimension(300,80));
         seedInputField.setFont(new Font("Dialog", Font.ITALIC, 40));
         titleScreenPane.add(seedInputField);
-        titleLayout.putConstraint(SpringLayout.WEST, seedInputField, 1000, SpringLayout.WEST, titleScreenPane);
-        titleLayout.putConstraint(SpringLayout.NORTH, seedInputField, 650, SpringLayout.NORTH, titleScreenPane);        
+        titleLayout.putConstraint(SpringLayout.WEST, seedInputField, ((screenSize.width / 2) + 150), SpringLayout.WEST, titleScreenPane);
+        titleLayout.putConstraint(SpringLayout.NORTH, seedInputField, ((screenSize.height / 2) + 550), SpringLayout.NORTH, titleScreenPane);        
         
         //creates listener for when user enters something into the seed input field
         seedInputField.addKeyListener(new KeyAdapter() {
