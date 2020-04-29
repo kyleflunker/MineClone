@@ -8,6 +8,7 @@ public class SpriteSheetLoader {
 	public final static float spriteSheetHeight = 512.0f;
 	public final static float textureSize = 128.0f;
 	
+	//returns the correct UV coords for the blockSheet texture based on the passed texture position arugments
 	public static float[] getUVCoords(float texPosX, float texPosY, int numOfFaces) {
 		
 		float leftX = getLeftXTexCoord(texPosX);

@@ -4,8 +4,8 @@ import org.lwjgl.util.vector.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 import Entities.Entity;
-import MineClone.MainGame;
-import MineClone.WorldGeneration;
+import MainGame.RunGame;
+import MainGame.WorldGeneration;
 import Models.RawModel;
 import Models.TexturedModel;
 import Textures.ModelTexture;
@@ -14,7 +14,7 @@ public class Chunk {
 	
 	public static int chunkSize = 10;  // each chunk is 10x10x10	
 	private Block[] chunkBlocks = new Block[1001];
-	private ArrayList<Entity> renderedEntities = new ArrayList<Entity>();  // list of all entities that exist in the chunk and should be rendered	
+	private Entity chunkEntity = null;  //each chunk is made out of one entity
 	private int xStartCoord;
 	private int yStartCoord;
 	private int zStartCoord;
@@ -40,8 +40,6 @@ public class Chunk {
 	// this decides which blocks in the chunk should be rendered (to save resources)
 	public void chooseRenderedBlocks() {
 		needsRender = false;
-		renderedEntities.clear();
-
 
 		List<Float> vert = new ArrayList<>();
 		List<Integer> ndx = new ArrayList<>();
@@ -52,37 +50,37 @@ public class Chunk {
 				if (checkForAdjacentBlocks(block)) {
 					switch(block.type) {
 					case 0:
-						new GrassBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						new GrassBlock(RunGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
 						break;
 					case 1:
-						new StoneBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						new StoneBlock(RunGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
 						break;
 					case 2:
-						new DirtBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						new DirtBlock(RunGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
 						break;
 					case 3:
-						new SandBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						new SandBlock(RunGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
 						break;
 					case 4:
-						new OakTreeBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						new OakTreeBlock(RunGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
 						break;
 					case 5:
-						new OakLeafBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						new OakLeafBlock(RunGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
 						break;
 					case 6:
-						new BirchTreeBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						new BirchTreeBlock(RunGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
 						break;
 					case 7:
-						new BirchLeafBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						new BirchLeafBlock(RunGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
 						break;
 					case 8:
-						new JungleTreeBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						new JungleTreeBlock(RunGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
 						break;
 					case 9:
-						new JungleLeafBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						new JungleLeafBlock(RunGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
 						break;
 					case 10:
-						new CactusBlock(MainGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
+						new CactusBlock(RunGame.loader1, this, block.getBlockPosition(), vert, ndx, uv);
 						break;							
 					}
 					
@@ -101,12 +99,12 @@ public class Chunk {
 			for (int i = 0; i < ndx_.length; ++i) ndx_[i] = ndx.get(i);
 			for (int i = 0; i < uv_.length; ++i) uv_[i] = uv.get(i);
 
-			RawModel model = MainGame.loader1.loadToVAO(vert_, ndx_, uv_, vaoID);
+			RawModel model = RunGame.loader1.loadToVAO(vert_, ndx_, uv_, vaoID);
 	 		vaoID = model.getVaoID();
-	 		ModelTexture texture = new ModelTexture(MainGame.loader1.loadTexture("blockSheet"));
+	 		ModelTexture texture = new ModelTexture(RunGame.loader1.loadTexture("blockSheet"));
 	 		TexturedModel texModel = new TexturedModel(model, texture);
 	
-			renderedEntities.add(new Entity(texModel, pos, 0.0f, 0.0f, 0.0f, 1.0f, this));			 		
+			chunkEntity = new Entity(texModel, pos, 0.0f, 0.0f, 0.0f, 1.0f, this);			 		
 			
 		}
 	}
@@ -138,8 +136,8 @@ public class Chunk {
 	}
 
 
-	public ArrayList<Entity> getRenderedEntities() {
-		return renderedEntities;
+	public Entity getChunkEntity() {
+		return chunkEntity;
 	}
 
 

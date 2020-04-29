@@ -1,8 +1,8 @@
 package BlockObjects;
 
-import MineClone.WorldGeneration;
 import org.lwjgl.util.vector.Vector3f;
 import Blocks.*;
+import MainGame.WorldGeneration;
 
 
 public class OakTreeSpawner {

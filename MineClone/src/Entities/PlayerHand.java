@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 import Blocks.GeneratedBlocks;
-import MineClone.MainGame;
+import MainGame.RunGame;
 import Models.RawModel;
 import Models.TexturedModel;
 import SpriteLoader.SpriteSheetLoader;
@@ -48,12 +48,12 @@ public class PlayerHand {
 
 	private static void createHandEntities() {
 		playerHand.clear();
-		RawModel sideModel = MainGame.loader1.loadToVAO(GeneratedBlocks.side_block_vertices, GeneratedBlocks.side_block_indices, SpriteSheetLoader.getUVCoords(sideX, sideY, 4), -1);
-	 	ModelTexture sideTexture = new ModelTexture(MainGame.loader1.loadTexture("blockSheet"));
+		RawModel sideModel = RunGame.loader1.loadToVAO(GeneratedBlocks.side_block_vertices, GeneratedBlocks.side_block_indices, SpriteSheetLoader.getUVCoords(sideX, sideY, 4), -1);
+	 	ModelTexture sideTexture = new ModelTexture(RunGame.loader1.loadTexture("blockSheet"));
 	 	TexturedModel sideTexModel = new TexturedModel(sideModel, sideTexture);		
 		playerHand.add(new Entity(sideTexModel, position, rotX, rotY, rotZ, scale, staticEntity, "hand"));
-		RawModel topModel = MainGame.loader1.loadToVAO(GeneratedBlocks.top_side_block_vertices, GeneratedBlocks.single_side_block_indices, SpriteSheetLoader.getUVCoords(topX, topY, 1), -1);
-	 	ModelTexture topTexture = new ModelTexture(MainGame.loader1.loadTexture("blockSheet"));
+		RawModel topModel = RunGame.loader1.loadToVAO(GeneratedBlocks.top_side_block_vertices, GeneratedBlocks.single_side_block_indices, SpriteSheetLoader.getUVCoords(topX, topY, 1), -1);
+	 	ModelTexture topTexture = new ModelTexture(RunGame.loader1.loadTexture("blockSheet"));
 	 	TexturedModel topTexModel = new TexturedModel(topModel, topTexture);		
 		playerHand.add(new Entity(topTexModel, position, rotX, rotY, rotZ, scale, staticEntity, "hand"));
 		
@@ -82,8 +82,8 @@ public class PlayerHand {
 			1, 1,
 			1, 0
 		};
-		RawModel crosshairModel = MainGame.loader1.loadToVAO(cross_vert, cross_ind, cross_uv, -1);
-	 	ModelTexture crosshairTexture = new ModelTexture(MainGame.loader1.loadTexture("crosshair"));
+		RawModel crosshairModel = RunGame.loader1.loadToVAO(cross_vert, cross_ind, cross_uv, -1);
+	 	ModelTexture crosshairTexture = new ModelTexture(RunGame.loader1.loadTexture("crosshair"));
 	 	TexturedModel crosshairTexModel = new TexturedModel(crosshairModel, crosshairTexture);		
 		playerCrosshair = new Entity(crosshairTexModel, position, 0, 0, 0, .02f, staticEntity, "crosshair");
 	}

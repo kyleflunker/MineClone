@@ -1,4 +1,4 @@
-package MineClone;
+package MainGame;
 
 import java.io.IOException;
 import java.util.Random;
@@ -29,21 +29,20 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.*;
 
-public class MainGame {
+public class RunGame {
 
-	private volatile boolean isRunning = false;
+	private volatile boolean isRunning = false;  //is the game running or not
 	private Thread glThread;
 	public static Loader loader1 = null;
 	public static StaticShader shader1 = null;
-	public static int seedInteger = 0;
+	public static int seedInteger = 0;  //seed to be used in the noiseGenerator (for terrain randomization purposes)
 	public static Noise noiseGenerator;  //noiseGenerator is defined in MainGame to be used by other classes (Camera, WorldGeneration, etc)
 	ImageIcon titleImage = new ImageIcon("resources/res/title.png");
 	ImageIcon backgroundImage = new ImageIcon("resources/res/background.png");
 
-
-
+	//open the title window only when application is started
 	public static void main(String[] args) throws IOException {
-		new MainGame().startTitleWindow();
+		new RunGame().startTitleWindow();
 	}
 
 	public void startTitleWindow() {
@@ -51,6 +50,7 @@ public class MainGame {
 		titleWindow.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         titleWindow.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
+        //creates listener for when user tries to exit the application window
         titleWindow.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we){
@@ -67,11 +67,11 @@ public class MainGame {
         SpringLayout titleLayout = new SpringLayout();
         titleScreenPane.setLayout(titleLayout);
         
+        //scales the background image to fit the entire window
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Image image = backgroundImage.getImage(); // transform it
         Image newimg = image.getScaledInstance(screenSize.width , screenSize.height,  java.awt.Image.SCALE_SMOOTH);  
-        backgroundImage = new ImageIcon(newimg);        
-        
+        backgroundImage = new ImageIcon(newimg);    
         
         JLabel seedInputLabel = new JLabel();
         seedInputLabel.setText("Enter Seed Number:");
@@ -82,13 +82,6 @@ public class MainGame {
         titleLayout.putConstraint(SpringLayout.WEST, seedInputLabel, 600, SpringLayout.WEST, titleScreenPane);
         titleLayout.putConstraint(SpringLayout.NORTH, seedInputLabel, 650, SpringLayout.NORTH, titleScreenPane);
         
-        JTextField seedInputField = new JTextField();
-        seedInputField.setPreferredSize(new Dimension(300,80));
-        seedInputField.setFont(new Font("Dialog", Font.ITALIC, 40));
-        titleScreenPane.add(seedInputField);
-        titleLayout.putConstraint(SpringLayout.WEST, seedInputField, 1000, SpringLayout.WEST, titleScreenPane);
-        titleLayout.putConstraint(SpringLayout.NORTH, seedInputField, 650, SpringLayout.NORTH, titleScreenPane);
-        
         JLabel seedLabel = new JLabel();
         seedLabel.setText("");
         seedLabel.setPreferredSize(new Dimension(400,70));
@@ -96,9 +89,16 @@ public class MainGame {
         seedLabel.setFont(new Font("Dialog", Font.PLAIN, 30));
         titleScreenPane.add(seedLabel);
         titleLayout.putConstraint(SpringLayout.WEST, seedLabel, 1000, SpringLayout.WEST, titleScreenPane);
-        titleLayout.putConstraint(SpringLayout.NORTH, seedLabel, 720, SpringLayout.NORTH, titleScreenPane);       
+        titleLayout.putConstraint(SpringLayout.NORTH, seedLabel, 720, SpringLayout.NORTH, titleScreenPane);   
         
+        JTextField seedInputField = new JTextField();
+        seedInputField.setPreferredSize(new Dimension(300,80));
+        seedInputField.setFont(new Font("Dialog", Font.ITALIC, 40));
+        titleScreenPane.add(seedInputField);
+        titleLayout.putConstraint(SpringLayout.WEST, seedInputField, 1000, SpringLayout.WEST, titleScreenPane);
+        titleLayout.putConstraint(SpringLayout.NORTH, seedInputField, 650, SpringLayout.NORTH, titleScreenPane);        
         
+        //creates listener for when user enters something into the seed input field
         seedInputField.addKeyListener(new KeyAdapter() {
         	public void keyPressed(KeyEvent key) {
         		if(seedInputField.getText().length() < 6 || key.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
@@ -115,8 +115,7 @@ public class MainGame {
         			seedInputField.setText(seedInputField.getText().substring(0, 6));
         		}
         	}
-        });
-        
+        });        
         
         JButton playButton = new JButton("PLAY");
         playButton.setPreferredSize(new Dimension(700, 100));
@@ -125,6 +124,7 @@ public class MainGame {
         titleLayout.putConstraint(SpringLayout.WEST, playButton, ((screenSize.width / 2) - (350)), SpringLayout.WEST, titleScreenPane);
         titleLayout.putConstraint(SpringLayout.NORTH, playButton, ((screenSize.height / 2) - (50) + (screenSize.height / 3)), SpringLayout.NORTH, titleScreenPane);
         
+        //creates listener for when user presses the Play button
         playButton.addActionListener(new ActionListener()
         {
           @Override
@@ -136,7 +136,7 @@ public class MainGame {
         	  } else {
         		  seedInteger = Integer.parseInt(seedInputField.getText());
         	  }
-        	  noiseGenerator = new Noise(100, 14, 20, MainGame.getSeed());  
+        	  noiseGenerator = new Noise(100, 14, 20, RunGame.getSeed());  //create the noise generator using the seed
         	  startGameWindow();
           }
         });
@@ -155,16 +155,7 @@ public class MainGame {
         
         titleWindow.setVisible(true);
     }	
-
-	public static int getSeed() {
-		return seedInteger;
-	}
-
-	public void setSeed(int seed) {
-		this.seedInteger = seed;
-	}
-
-
+	
 	private void startGameWindow() {
 		glThread = new Thread(new Runnable() {
         @Override
@@ -183,44 +174,44 @@ public class MainGame {
 		        StaticShader shader = new StaticShader();
 		        shader1 = shader;
 		        MasterRenderer renderer = new MasterRenderer(shader);
-		        
 		              
 		        Camera camera = new Camera(new Vector3f(5, noiseGenerator.generateHeight(5, 5) + 10, 5), 0 ,0, 0);
 		        PlayerHand playerHand = new PlayerHand(new Vector3f(Camera.getPosition().x,Camera.getPosition().y, Camera.getPosition().z), 0.0f, 20f, 0.0f, .36f, true);		      
 		        
-		        Mouse.setGrabbed(true);
+		        Mouse.setGrabbed(true);  //attach the mouse to the OpenGL window
 		        
 		        long millis = System.currentTimeMillis();
 		        long frames = 0;
 		        
-		       
 		        while(isRunning) {
-			        camera.move(); 
-			        playerHand.checkForInput();
+			        camera.move(); //handle player movement and positioning
+			        playerHand.checkForInput(); //handle changes in the block that the player is holding
 			        renderer.prepare();
 			        shader.start();
 			        
+			        //render the crosshair in the middle of the screen
 			        shader.loadViewMatrix(playerHand.getPlayerCrosshair());
 			        renderer.render(playerHand.getPlayerCrosshair(), shader);
 			        
-			        shader.loadViewMatrix(playerHand.getPlayerHand().get(0));
-			        
+			        //render the two entities that make up the block that the player holds
+			        shader.loadViewMatrix(playerHand.getPlayerHand().get(0));			        
 			        for(Entity playerHandEntity : playerHand.getPlayerHand()) {
 			        	renderer.render(playerHandEntity, shader);
 			        }
 			        
+			        //render the chunk entities
 			        shader.loadViewMatrix(camera);
-			        			        
-			        for (Chunk chunks : WorldGeneration.getRenderedChunks()) {
-				        for(Entity entity : chunks.getRenderedEntities()) {
-				        	renderer.render(entity, shader); 
-				        } 
+			        for (Chunk chunk : WorldGeneration.getRenderedChunks()) {
+			        	if(chunk.getChunkEntity() != null) {
+			        		renderer.render(chunk.getChunkEntity(), shader);
+			        	}
 			        }
 			        
-			        WorldGeneration.chunkController();
+			        WorldGeneration.chunkController();  //control which chunks should be rendered/created
 			        shader.stop();
 			        DisplayManager.updateDisplay();
 			        
+			        //keep track of FPS and print it to console
 			        frames++;
 			        if (System.currentTimeMillis() - millis > 1000) {
 				        System.out.printf("FPS: %f\n", frames / ((System.currentTimeMillis() - millis) / (double)1000));
@@ -234,15 +225,13 @@ public class MainGame {
         }, "LWJGL Thread");
         glThread.start();
 	}
+	
+	public static int getSeed() {
+		return seedInteger;
+	}
 
-	private void stopGL() {
-        isRunning = false;
-        try {
-            glThread.join();
-        } catch (InterruptedException e) {
-            //handle exception
-            e.printStackTrace();
-        }
-    }
+	public void setSeed(int seed) {
+		this.seedInteger = seed;
+	}
 
 }

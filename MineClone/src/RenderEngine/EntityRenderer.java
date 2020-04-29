@@ -17,12 +17,14 @@ public class EntityRenderer {
 	public static int FOV = 100;
 	
 	public static void render(Entity entity, StaticShader shader) {
+		//if entity isn't static (ex: crosshair), then frustum cull the entities that are rendering 
 		if(!entity.isStaticEntity()) {
 			Vector3f.sub(entity.position, Camera.position, temp);		
 			temp.x += 5; temp.y += 5; temp.z += 5;
 			if (temp.lengthSquared() > 5*5*3 * 1.732f) { 
 				temp.normalise();
 				float distance = Vector3f.dot(Camera.normal, temp);
+				//if entity is not in the player FOV, do not render it
 				if (acos(distance) < Math.toRadians(FOV)) return;
 			}
 		}

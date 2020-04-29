@@ -1,4 +1,4 @@
-package MineClone;
+package MainGame;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -19,8 +19,8 @@ import Blocks.*;
 
 public class WorldGeneration {	
 	
-	public static HashMap<String, Chunk> generatedChunks = new HashMap<String, Chunk>();
-	private static ArrayList<Chunk> renderedChunks = new ArrayList<Chunk>();
+	public static HashMap<String, Chunk> generatedChunks = new HashMap<String, Chunk>(); //HashMap containing ChunkIDs and their respective chunks
+	private static ArrayList<Chunk> renderedChunks = new ArrayList<Chunk>();  //list of chunks that should be rendered
 	public static List<Vec3i> needGenerate = new ArrayList<>();
 	private static int initialGeneration = -50;
 	public static int renderDistance = 100;
@@ -203,7 +203,7 @@ public class WorldGeneration {
 		//populate the chunk with blocks
 		for(int x = xPos; x < xPos + 10; x++) {
 			for(int z = zPos; z < zPos + 10; z++) {	
-				float noiseHeightValue = MainGame.noiseGenerator.generateHeight(x, z);
+				float noiseHeightValue = RunGame.noiseGenerator.generateHeight(x, z);
 				for(float y = yPos; y < yPos + 10; y++) {	
 					
 					Random random2 = new Random();

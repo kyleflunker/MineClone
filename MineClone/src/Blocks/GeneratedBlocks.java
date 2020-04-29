@@ -6,8 +6,6 @@ import SpriteLoader.SpriteSheetLoader;
 
 public class GeneratedBlocks {	
 	
-	
-	
 	public static float[] all_sides_block_vertices = {
 			
 			-0.5f,0.5f,-0.5f,	

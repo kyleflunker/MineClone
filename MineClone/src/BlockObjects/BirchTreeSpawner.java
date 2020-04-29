@@ -1,8 +1,8 @@
 package BlockObjects;
 
-import MineClone.WorldGeneration;
 import org.lwjgl.util.vector.Vector3f;
 import Blocks.*;
+import MainGame.WorldGeneration;
 
 public class BirchTreeSpawner {
 	
@@ -29,8 +29,8 @@ public class BirchTreeSpawner {
 		for(int[] leaf : leafBlocks) {
 			checkForCorrectChunk(new Vector3f(spawnPosX + leaf[x], spawnPosY + leaf[y], spawnPosZ + leaf[z]), 7);
 		}
-		for(int[] oakTree : birchTreeBlocks) {
-			checkForCorrectChunk(new Vector3f(spawnPosX + oakTree[x], spawnPosY + oakTree[y], spawnPosZ + oakTree[z]), 6);
+		for(int[] birchTree : birchTreeBlocks) {
+			checkForCorrectChunk(new Vector3f(spawnPosX + birchTree[x], spawnPosY + birchTree[y], spawnPosZ + birchTree[z]), 6);
 		}
 		
 	}

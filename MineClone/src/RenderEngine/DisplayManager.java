@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
 
 import Entities.Camera;
-import MineClone.MainGame;
+import MainGame.RunGame;
 
 public class DisplayManager {
 	

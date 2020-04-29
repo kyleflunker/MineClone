@@ -6,8 +6,7 @@ import org.lwjgl.util.vector.Vector3f;
 import Entities.PlayerHand;
 import Blocks.Block;
 import Blocks.Chunk;
-import MineClone.*;
-import Tools.Noise;
+import MainGame.*;
 
 public class Camera {
 	
@@ -38,49 +37,6 @@ public class Camera {
 	}
 	
 	public void move() {
-		
-		if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
-			Vector3f oldRayVec = new Vector3f(position);
-			Vector3f rayVec = new Vector3f(position);
-			Vector3f incVec = (Vector3f) new Vector3f(normal).scale(-1/100f);
-			for (int i = 0; i < 700; i++) {
-				rayVec = Vector3f.add(incVec,  rayVec, null);
-				int x = (int) rayVec.getX();
-				int y = (int) rayVec.getY();
-				int z = (int) rayVec.getZ();
-				int ox = (int) oldRayVec.getX();
-				int oy = (int) oldRayVec.getY();
-				int oz = (int) oldRayVec.getZ();
-				if (x != ox || y != oy || z != oz) {
-					if (WorldGeneration.isBlockSolid(x, y, z)) {
-						if(System.currentTimeMillis() - lastTimePlacedOrDestroyed > 400) {							
-							if (Mouse.isButtonDown(0)) {
-								Chunk c = WorldGeneration.getGeneratedChunks().get(WorldGeneration.createChunkID(
-										(int) Math.floor(x / 10f) * 10,
-										(int) Math.floor(y / 10f) * 10,
-										(int) Math.floor(z / 10f) * 10));
-								c.getChunkBlocks()[c.determineArrayPosition(x, y, z)] = null;
-								c.chooseRenderedBlocks();
-								WorldGeneration.setAdjacentChunksNeedRender(c);
-							} else {
-								Chunk c = WorldGeneration.getGeneratedChunks().get(WorldGeneration.createChunkID(
-										(int) Math.floor(ox / 10f) * 10,
-										(int) Math.floor(oy / 10f) * 10,
-										(int) Math.floor(oz / 10f) * 10));
-								c.addToChunkBlocks(new Block(new Vector3f(ox, oy, oz), PlayerHand.getSelectedBlock()));
-								c.chooseRenderedBlocks();
-								WorldGeneration.setAdjacentChunksNeedRender(c);
-							}							
-							lastTimePlacedOrDestroyed = System.currentTimeMillis();
-							break;
-						}
-					}
-				}
-				oldRayVec = rayVec;
-			}
-			 
-			
-		}
 		
 		float horizMove = 0;
 		float vertMove = 0;
@@ -116,7 +72,7 @@ public class Camera {
 		}
 
 		//simple, simple collision system.  set the player's y position 3 above the noiseGenerator's output		
-		targetY = MainGame.noiseGenerator.generateHeight((int) position.x, (int) position.z) + 3;
+		targetY = RunGame.noiseGenerator.generateHeight((int) position.x, (int) position.z) + 3;
 		position.y += (targetY - position.y) / 5.0f;				
  
 
@@ -131,6 +87,52 @@ public class Camera {
 		Vector3f.cross(normal, rightVec, headVec);
 
  		rotY -= Math.PI / 2;
+ 		
+ 		//handle block pacing and destroying
+ 		if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
+			Vector3f oldRayVec = new Vector3f(position);
+			Vector3f rayVec = new Vector3f(position);
+			Vector3f incVec = (Vector3f) new Vector3f(frontVec).scale(-1/100f);
+			for (int i = 0; i < 700; i++) {
+				rayVec = Vector3f.add(incVec, rayVec, null);
+				int x = (int) rayVec.getX();
+				int y = (int) rayVec.getY();
+				int z = (int) rayVec.getZ();
+				int ox = (int) oldRayVec.getX();
+				int oy = (int) oldRayVec.getY();
+				int oz = (int) oldRayVec.getZ();
+				if (x != ox || y != oy || z != oz) {
+					if (WorldGeneration.isBlockSolid(x, y, z)) {
+						//if enough time has passed since the user has placed or destroyed a block, allow them to place or destroy a block
+						if(System.currentTimeMillis() - lastTimePlacedOrDestroyed > 400) {							
+							if (Mouse.isButtonDown(0)) {
+								Chunk c = WorldGeneration.getGeneratedChunks().get(WorldGeneration.createChunkID(
+										(int) Math.floor(x / 10f) * 10,
+										(int) Math.floor(y / 10f) * 10,
+										(int) Math.floor(z / 10f) * 10));
+								c.getChunkBlocks()[c.determineArrayPosition(x, y, z)] = null;
+								c.chooseRenderedBlocks();
+								WorldGeneration.setAdjacentChunksNeedRender(c);
+							} else {
+								Chunk c = WorldGeneration.getGeneratedChunks().get(WorldGeneration.createChunkID(
+										(int) Math.floor(ox / 10f) * 10,
+										(int) Math.floor(oy / 10f) * 10,
+										(int) Math.floor(oz / 10f) * 10));
+								c.addToChunkBlocks(new Block(new Vector3f(ox, oy, oz), PlayerHand.getSelectedBlock()));
+								c.chooseRenderedBlocks();
+								WorldGeneration.setAdjacentChunksNeedRender(c);
+							}							
+							lastTimePlacedOrDestroyed = System.currentTimeMillis();
+							break;
+						}
+					}
+				}
+				oldRayVec = rayVec;
+			}
+			 
+			
+		}
+ 		
 
 		frontVec.scale(moveAt);
 		rightVec.scale(horizMove);

@@ -1,8 +1,8 @@
 package BlockObjects;
 
-import MineClone.WorldGeneration;
 import org.lwjgl.util.vector.Vector3f;
 import Blocks.*;
+import MainGame.WorldGeneration;
 
 public class CactiSpawner {
 	//2d block array positions are relative to the spawn position that are passed in the spawn method

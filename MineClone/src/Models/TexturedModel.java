@@ -1,7 +1,5 @@
 package Models;
 
-import org.newdawn.slick.opengl.Texture;
-
 import Textures.ModelTexture;
 
 public class TexturedModel {
