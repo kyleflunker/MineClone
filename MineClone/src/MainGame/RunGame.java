@@ -80,7 +80,7 @@ public class RunGame {
         seedInputLabel.setFont(new Font("Dialog", Font.BOLD,60));
         titleScreenPane.add(seedInputLabel);
         titleLayout.putConstraint(SpringLayout.WEST, seedInputLabel, ((screenSize.width / 2) - 450), SpringLayout.WEST, titleScreenPane);
-        titleLayout.putConstraint(SpringLayout.NORTH, seedInputLabel, ((screenSize.height / 2) + 550), SpringLayout.NORTH, titleScreenPane);
+        titleLayout.putConstraint(SpringLayout.NORTH, seedInputLabel, ((screenSize.height / 2) + (screenSize.height / 10)), SpringLayout.NORTH, titleScreenPane);
         
         JLabel seedLabel = new JLabel();
         seedLabel.setText("");
@@ -89,14 +89,14 @@ public class RunGame {
         seedLabel.setFont(new Font("Dialog", Font.PLAIN, 30));
         titleScreenPane.add(seedLabel);
         titleLayout.putConstraint(SpringLayout.WEST, seedLabel, ((screenSize.width / 2) + 135), SpringLayout.WEST, titleScreenPane);
-        titleLayout.putConstraint(SpringLayout.NORTH, seedLabel, ((screenSize.height / 2) + 650), SpringLayout.NORTH, titleScreenPane);   
+        titleLayout.putConstraint(SpringLayout.NORTH, seedLabel, ((screenSize.height / 2) + (screenSize.height / 8)), SpringLayout.NORTH, titleScreenPane);   
         
         JTextField seedInputField = new JTextField();
         seedInputField.setPreferredSize(new Dimension(300,80));
         seedInputField.setFont(new Font("Dialog", Font.ITALIC, 40));
         titleScreenPane.add(seedInputField);
         titleLayout.putConstraint(SpringLayout.WEST, seedInputField, ((screenSize.width / 2) + 150), SpringLayout.WEST, titleScreenPane);
-        titleLayout.putConstraint(SpringLayout.NORTH, seedInputField, ((screenSize.height / 2) + 550), SpringLayout.NORTH, titleScreenPane);        
+        titleLayout.putConstraint(SpringLayout.NORTH, seedInputField, ((screenSize.height / 2) + (screenSize.height / 10)), SpringLayout.NORTH, titleScreenPane);        
         
         //creates listener for when user enters something into the seed input field
         seedInputField.addKeyListener(new KeyAdapter() {
