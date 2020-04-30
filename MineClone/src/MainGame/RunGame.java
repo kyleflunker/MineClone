@@ -28,6 +28,10 @@ import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.*;
+import sun.audio.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 public class RunGame {
 
@@ -103,7 +107,7 @@ public class RunGame {
         seedInputField.addKeyListener(new KeyAdapter() {
         	public void keyPressed(KeyEvent key) {
         		if(seedInputField.getText().length() < 6 || key.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-	        		if (key.getKeyChar() >= '0' && key.getKeyChar() <= '9' || key.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+	        		if (key.getKeyChar() >= '0' && key.getKeyChar() <= '9' && !(key.getKeyCode() == '-') || key.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
 	        			seedInputField.setEditable(true);
 	        			seedLabel.setText("");
 	        		} else {
@@ -162,7 +166,34 @@ public class RunGame {
         titleLayout.putConstraint(SpringLayout.NORTH, backgroundImageLabel, 5, SpringLayout.NORTH, titleScreenPane);
         
         titleWindow.setVisible(true);
-    }	
+        
+      //plays music
+        playMusic("resources/res/music.wav");
+    }
+	
+	public static void playMusic(String filepath) {
+		InputStream music;
+			try {
+				music = new FileInputStream(new File(filepath));
+				AudioStream audios = new AudioStream(music);
+				AudioPlayer.player.start(audios);
+				
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(null, "Error");
+			}
+	}
+	
+	public static void stopMusic(String filepath) {
+		InputStream music;
+			try {
+				music = new FileInputStream(new File(filepath));
+				AudioStream audios = new AudioStream(music);
+				AudioPlayer.player.stop(audios);
+				
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(null, "Error");
+			}
+	}
 	
 	private void startGameWindow() {
 		glThread = new Thread(new Runnable() {
