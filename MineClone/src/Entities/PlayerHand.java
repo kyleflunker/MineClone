@@ -48,19 +48,19 @@ public class PlayerHand {
 	}
 
 	private static void createHandEntities() {
-		if (isHand == false)//use this to switch hand vs block
-		{
+		//if (isHand == false)//use this to switch hand vs block
+		//{
 			playerHand.clear();
 			RawModel sideModel = RunGame.loader1.loadToVAO(GeneratedBlocks.side_block_vertices, GeneratedBlocks.side_block_indices, SpriteSheetLoader.getUVCoords(sideX, sideY, 4), -1);
 		 	ModelTexture sideTexture = new ModelTexture(RunGame.loader1.loadTexture("blockSheet"));
 		 	TexturedModel sideTexModel = new TexturedModel(sideModel, sideTexture);		
-			playerHand.add(new Entity(sideTexModel, position, rotX - 2, rotY, rotZ - 2, scale, staticEntity, "hand")); //Trying to rotate the block
+			playerHand.add(new Entity(sideTexModel, position, rotX, rotY, rotZ, scale, staticEntity, "hand")); //Trying to rotate the block
 			RawModel topModel = RunGame.loader1.loadToVAO(GeneratedBlocks.top_side_block_vertices, GeneratedBlocks.single_side_block_indices, SpriteSheetLoader.getUVCoords(topX, topY, 1), -1);
 		 	ModelTexture topTexture = new ModelTexture(RunGame.loader1.loadTexture("blockSheet"));
 		 	TexturedModel topTexModel = new TexturedModel(topModel, topTexture);		
 			playerHand.add(new Entity(topTexModel, position, rotX, rotY, rotZ, scale, staticEntity, "hand"));
-		}else
-		{
+		/*}else
+		{ 
 			//This one uses the hand sheet, it doesn't apply the texture correctly yet, started with just a block
 			playerHand.clear();
 			RawModel sideHand = RunGame.loader1.loadToVAO(GeneratedBlocks.side_block_vertices, GeneratedBlocks.side_block_indices, SpriteSheetLoader.getUVCoords(sideX, sideY, 4), -1);
@@ -71,7 +71,7 @@ public class PlayerHand {
 		 	ModelTexture topTexture = new ModelTexture(RunGame.loader1.loadTexture("hand"));
 		 	TexturedModel topTexModel = new TexturedModel(topHand, topTexture);		
 			playerHand.add(new Entity(topTexModel, position, rotX, rotY, rotZ, scale, staticEntity, "hand"));
-		}
+		} */
 		
 	}	
 	
