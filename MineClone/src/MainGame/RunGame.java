@@ -39,6 +39,7 @@ public class RunGame {
 	public static Noise noiseGenerator;  //noiseGenerator is defined in MainGame to be used by other classes (Camera, WorldGeneration, etc)
 	ImageIcon titleImage = new ImageIcon("resources/res/title.png");
 	ImageIcon backgroundImage = new ImageIcon("resources/res/background.png");
+	ImageIcon singlePlayer = new ImageIcon("resources/res/SinglePlayerButton.PNG");
 
 	//open the title window only when application is started
 	public static void main(String[] args) throws IOException {
@@ -117,15 +118,22 @@ public class RunGame {
         	}
         });        
         
-        JButton playButton = new JButton("PLAY");
-        playButton.setPreferredSize(new Dimension(700, 100));
-        playButton.setFont(new Font("Dialog", Font.BOLD, 100));
-        titleScreenPane.add(playButton);
-        titleLayout.putConstraint(SpringLayout.WEST, playButton, ((screenSize.width / 2) - (350)), SpringLayout.WEST, titleScreenPane);
-        titleLayout.putConstraint(SpringLayout.NORTH, playButton, ((screenSize.height / 2) - (50) + (screenSize.height / 3)), SpringLayout.NORTH, titleScreenPane);
+        //JButton playButton = new JButton("PLAY");
+       // playButton.setPreferredSize(new Dimension(700, 100));
+       // playButton.setFont(new Font("Dialog", Font.BOLD, 100));
+        //titleScreenPane.add(playButton);
+       // titleLayout.putConstraint(SpringLsayout.WEST, playButton, ((screenSize.width / 2) - (350)), SpringLayout.WEST, titleScreenPane);
+       // titleLayout.putConstraint(SpringLayout.NORTH, playButton, ((screenSize.height / 2) - (50) + (screenSize.height / 3)), SpringLayout.NORTH, titleScreenPane);
+        
+        JButton playButton2 = new JButton();
+        playButton2.setIcon(singlePlayer);
+        titleScreenPane.add(playButton2);
+        titleLayout.putConstraint(SpringLayout.WEST, playButton2, ((screenSize.width / 2) - (300)), SpringLayout.WEST, titleScreenPane);
+        titleLayout.putConstraint(SpringLayout.NORTH, playButton2, ((screenSize.height / 2) - (50) + (screenSize.height / 3)), SpringLayout.NORTH, titleScreenPane);
+        playButton2.setPreferredSize(new Dimension(400, 40));
         
         //creates listener for when user presses the Play button
-        playButton.addActionListener(new ActionListener()
+        playButton2.addActionListener(new ActionListener()
         {
           @Override
           public void actionPerformed(ActionEvent b) {

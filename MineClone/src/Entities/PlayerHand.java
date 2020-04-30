@@ -129,7 +129,7 @@ public class PlayerHand {
 			selectedBlock = 4;
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_5)) {
-			changeTexture(3, 3, 3, 3);
+			changeTexture(3, 4, 3, 4);
 			selectedBlock = 5;
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_6)) {
@@ -145,7 +145,7 @@ public class PlayerHand {
 			selectedBlock = 8;
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_9)) {
-			changeTexture(3, 4, 3, 4);
+			changeTexture(3, 3, 3, 3);
 			selectedBlock = 9;
 		}		
 		
