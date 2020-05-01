@@ -27,6 +27,9 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import sun.audio.*;
 import java.io.File;
@@ -148,8 +151,9 @@ public class RunGame {
         	  } else {
         		  seedInteger = Integer.parseInt(seedInputField.getText());
         	  }
-        	  noiseGenerator = new Noise(100, 14, 20, RunGame.getSeed());  //create the noise generator using the seed
+        	  noiseGenerator = new Noise(100, 14, 20, RunGame.getSeed());  //create the noise generator using the seed 
         	  startGameWindow();
+        	  
           }
         });
         
@@ -167,33 +171,15 @@ public class RunGame {
         
         titleWindow.setVisible(true);
         
-      //plays music
-        playMusic("resources/res/music.wav");
+        //play a sound looped continuously (until .stopSound() is called)
+        SoundController.playLoopedSound("resources/res/music.wav", "Music");
+        
+        //this is how you would play a sound once
+        //SoundController.playSound("resources/res/music.wav", "Music");
+        
+        //this is how you would stop the specific sound
+        //SoundController.stopSound("Music");
     }
-	
-	public static void playMusic(String filepath) {
-		InputStream music;
-			try {
-				music = new FileInputStream(new File(filepath));
-				AudioStream audios = new AudioStream(music);
-				AudioPlayer.player.start(audios);
-				
-			} catch (Exception e) {
-				JOptionPane.showMessageDialog(null, "Error");
-			}
-	}
-	
-	public static void stopMusic(String filepath) {
-		InputStream music;
-			try {
-				music = new FileInputStream(new File(filepath));
-				AudioStream audios = new AudioStream(music);
-				AudioPlayer.player.stop(audios);
-				
-			} catch (Exception e) {
-				JOptionPane.showMessageDialog(null, "Error");
-			}
-	}
 	
 	private void startGameWindow() {
 		glThread = new Thread(new Runnable() {
