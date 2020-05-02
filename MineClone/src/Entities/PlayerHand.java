@@ -1,7 +1,6 @@
 package Entities;
 
 import java.util.ArrayList;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 import Blocks.GeneratedBlocks;
@@ -48,30 +47,25 @@ public class PlayerHand {
 	}
 
 	private static void createHandEntities() {
-		//if (isHand == false)//use this to switch hand vs block
-		//{
+		if (isHand == false) {
+			//display a block as in the players hand
 			playerHand.clear();
 			RawModel sideModel = RunGame.loader1.loadToVAO(GeneratedBlocks.side_block_vertices, GeneratedBlocks.side_block_indices, SpriteSheetLoader.getUVCoords(sideX, sideY, 4), -1);
 		 	ModelTexture sideTexture = new ModelTexture(RunGame.loader1.loadTexture("blockSheet"));
 		 	TexturedModel sideTexModel = new TexturedModel(sideModel, sideTexture);		
-			playerHand.add(new Entity(sideTexModel, position, rotX, rotY, rotZ, scale, staticEntity, "hand")); //Trying to rotate the block
+			playerHand.add(new Entity(sideTexModel, position, rotX, rotY, rotZ, scale, staticEntity, "handBlock")); //Trying to rotate the block
 			RawModel topModel = RunGame.loader1.loadToVAO(GeneratedBlocks.top_side_block_vertices, GeneratedBlocks.single_side_block_indices, SpriteSheetLoader.getUVCoords(topX, topY, 1), -1);
 		 	ModelTexture topTexture = new ModelTexture(RunGame.loader1.loadTexture("blockSheet"));
 		 	TexturedModel topTexModel = new TexturedModel(topModel, topTexture);		
-			playerHand.add(new Entity(topTexModel, position, rotX, rotY, rotZ, scale, staticEntity, "hand"));
-		/*}else
-		{ 
-			//This one uses the hand sheet, it doesn't apply the texture correctly yet, started with just a block
+			playerHand.add(new Entity(topTexModel, position, rotX, rotY, rotZ, scale, staticEntity, "handBlock"));
+		} else { 
+			//display a hand
 			playerHand.clear();
-			RawModel sideHand = RunGame.loader1.loadToVAO(GeneratedBlocks.side_block_vertices, GeneratedBlocks.side_block_indices, SpriteSheetLoader.getUVCoords(sideX, sideY, 4), -1);
-		 	ModelTexture sideTexture = new ModelTexture(RunGame.loader1.loadTexture("hand"));
+			RawModel sideHand = RunGame.loader1.loadToVAO(getHandVerts(), GeneratedBlocks.all_sides_block_indices, getHandUV(), -1);
+		 	ModelTexture sideTexture = new ModelTexture(RunGame.loader1.loadTexture("arm"));
 		 	TexturedModel sideTexModel = new TexturedModel(sideHand, sideTexture);		
-			playerHand.add(new Entity(sideTexModel, position, rotX, rotY, rotZ, scale, staticEntity, "hand"));
-			RawModel topHand = RunGame.loader1.loadToVAO(GeneratedBlocks.top_side_block_vertices, GeneratedBlocks.single_side_block_indices, SpriteSheetLoader.getUVCoords(topX, topY, 1), -1);
-		 	ModelTexture topTexture = new ModelTexture(RunGame.loader1.loadTexture("hand"));
-		 	TexturedModel topTexModel = new TexturedModel(topHand, topTexture);		
-			playerHand.add(new Entity(topTexModel, position, rotX, rotY, rotZ, scale, staticEntity, "hand"));
-		} */
+			playerHand.add(new Entity(sideTexModel, position, 20, 5, -20, .35f, staticEntity, "hand"));			
+		} 
 		
 	}	
 	
@@ -107,46 +101,54 @@ public class PlayerHand {
 	
 
 	public void checkForInput() {
-		if(Keyboard.isKeyDown(Keyboard.KEY_0)) {
-			//changeTexture(1, 1, 3, 1);
+		if(Keyboard.isKeyDown(Keyboard.KEY_0)) {			
 			isHand  = true;
-			selectedBlock = 0;
+			createHandEntities();
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_1)) {
 			changeTexture(4, 1, 4, 1);
+			isHand  = false;
 			selectedBlock = 1;
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_2)) {
 			changeTexture(2, 1, 2, 1);
+			isHand  = false;
 			selectedBlock = 2;
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_3)) {
 			changeTexture(1, 4, 1, 4);
+			isHand  = false;
 			selectedBlock = 3;
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_4)) {
 			changeTexture(4, 2, 3, 2);
+			isHand  = false;
 			selectedBlock = 4;
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_5)) {
 			changeTexture(3, 4, 3, 4);
+			isHand  = false;
 			selectedBlock = 5;
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_6)) {
 			changeTexture(2, 2, 1, 2);
+			isHand  = false;
 			selectedBlock = 6;
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_7)) {
 			changeTexture(4, 3, 4, 3);
+			isHand  = false;
 			selectedBlock = 7;
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_8)) {
 			changeTexture(2, 3, 1, 3);
+			isHand  = false;
 			selectedBlock = 8;
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_9)) {
-			changeTexture(3, 3, 3, 3);
-			selectedBlock = 9;
+			changeTexture(1, 1, 3, 1);
+			isHand  = false;
+			selectedBlock = 0;
 		}		
 		
 	}	
@@ -185,6 +187,78 @@ public class PlayerHand {
 
 	public boolean isStaticEntity() {
 		return staticEntity;
+	}
+	
+	public static boolean isHand() {
+		return isHand;
+	}
+	
+	public static float[] getHandVerts() {
+		float[] hand_vertices = {
+				
+				-0.3f,0.2f,-0.5f,	
+				-0.3f,-0.2f,-0.5f,	
+				0.3f,-0.2f,-0.5f,	
+				0.3f,0.2f,-0.5f,		
+				
+				-0.3f,0.2f,0.5f,	
+				-0.3f,-0.2f,0.5f,	
+				0.3f,-0.2f,0.5f,	
+				0.3f,0.2f,0.5f,
+				
+				0.3f,0.2f,-0.5f,	
+				0.3f,-0.2f,-0.5f,	
+				0.3f,-0.2f,0.5f,	
+				0.3f,0.2f,0.5f,
+				
+				-0.3f,0.2f,-0.5f,	
+				-0.3f,-0.2f,-0.5f,	
+				-0.3f,-0.2f,0.5f,	
+				-0.3f,0.2f,0.5f,
+				
+				-0.3f,0.2f,0.5f,
+				-0.3f,0.2f,-0.5f,
+				0.3f,0.2f,-0.5f,
+				0.3f,0.2f,0.5f,
+				
+				-0.3f,-0.2f,0.5f,
+				-0.3f,-0.2f,-0.5f,
+				0.3f,-0.2f,-0.5f,
+				0.3f,-0.2f,0.5f
+		};
+		return hand_vertices;
+	}
+	
+	public static float[] getHandUV() {
+		float[] hand_uv = {
+				
+				0, 0,
+				0, 1,
+				1, 1,
+				1, 0,
+				0, 0,
+				0, 1,
+				1, 1,
+				1, 0,
+				0, 0,
+				0, 1,
+				1, 1,
+				1, 0,
+				0, 0,
+				0, 1,
+				1, 1,
+				1, 0,
+				0, 0,
+				0, 1,
+				1, 1,
+				1, 0,
+				0, 0,
+				0, 1,
+				1, 1,
+				1, 0
+				
+		};
+		return hand_uv;
 	}
 	 
 }

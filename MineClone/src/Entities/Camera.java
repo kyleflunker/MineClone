@@ -114,13 +114,15 @@ public class Camera {
 								c.chooseRenderedBlocks();
 								WorldGeneration.setAdjacentChunksNeedRender(c);
 							} else {
-								Chunk c = WorldGeneration.getGeneratedChunks().get(WorldGeneration.createChunkID(
-										(int) Math.floor(ox / 10f) * 10,
-										(int) Math.floor(oy / 10f) * 10,
-										(int) Math.floor(oz / 10f) * 10));
-								c.addToChunkBlocks(new Block(new Vector3f(ox, oy, oz), PlayerHand.getSelectedBlock()));
-								c.chooseRenderedBlocks();
-								WorldGeneration.setAdjacentChunksNeedRender(c);
+								if(!PlayerHand.isHand()) {
+									Chunk c = WorldGeneration.getGeneratedChunks().get(WorldGeneration.createChunkID(
+											(int) Math.floor(ox / 10f) * 10,
+											(int) Math.floor(oy / 10f) * 10,
+											(int) Math.floor(oz / 10f) * 10));
+									c.addToChunkBlocks(new Block(new Vector3f(ox, oy, oz), PlayerHand.getSelectedBlock()));
+									c.chooseRenderedBlocks();
+									WorldGeneration.setAdjacentChunksNeedRender(c);
+								}
 							}							
 							lastTimePlacedOrDestroyed = System.currentTimeMillis();
 							break;
