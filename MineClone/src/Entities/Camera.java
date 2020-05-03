@@ -1,5 +1,7 @@
 package Entities;
 
+import java.util.Random;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
@@ -27,6 +29,11 @@ public class Camera {
 	float moveAt = 0;
 	private static float targetY = 0;
 	private long lastTimePlacedOrDestroyed = 0;
+	private static long lastTimeWalkSoundPlayed = 0;
+	private static long walkSoundGap = 440;
+	private static long sprintSoundGap = 300;
+	String[] walkingSounds = new String[] {"resources/res/stone1.wav", "resources/res/stone2.wav", 
+			"resources/res/stone3.wav", "resources/res/stone4.wav", "resources/res/stone5.wav", "resources/res/stone6.wav",  };
 	
 	public Camera(Vector3f position, float rotX, float rotY, float rotZ) {
 		this.position = position;
@@ -43,39 +50,28 @@ public class Camera {
 		
 		//handle front/back movement
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			moveAt = -speed;
-			if(SoundController.soundPlaying("Walk") == true) {
-				SoundController.playLoopedSound("resources/res/gravel1.wav", "Walk");
-			}
+			moveAt = -speed;			
 		}else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			moveAt = speed;
-			if(SoundController.soundPlaying("Walk") == true) {
-				SoundController.playLoopedSound("resources/res/gravel1.wav", "Walk");
-			}
+			moveAt = speed;			
 		} else {
 			moveAt = 0;
 		}
 		
 		//handle left/right movement
 		if (Keyboard.isKeyDown(Keyboard.KEY_D) && !Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			horizMove = -speed;
-			if(SoundController.soundPlaying("Walk") == true) {
-				SoundController.playLoopedSound("resources/res/gravel1.wav", "Walk");
-			}
+			horizMove = -speed;			
 		} 
 		else if (!Keyboard.isKeyDown(Keyboard.KEY_D) && Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			horizMove = speed;
-			if(SoundController.soundPlaying("Walk") == true) {
-				SoundController.playLoopedSound("resources/res/gravel1.wav", "Walk");
-			}
+			horizMove = speed;			
 		}
 		
 		//check if any moving is activated
-		if (!Keyboard.isKeyDown(Keyboard.KEY_D) && !Keyboard.isKeyDown(Keyboard.KEY_A) && !Keyboard.isKeyDown(Keyboard.KEY_W) && !Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			if(SoundController.soundPlaying("Walk") == true) {
-			} else {
-				SoundController.stopSound("Walk");
-			}
+		if (Keyboard.isKeyDown(Keyboard.KEY_D) || Keyboard.isKeyDown(Keyboard.KEY_A) || Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_S)) {
+			Random random = new Random();
+			if(allowNewWalkSound()) {
+				SoundController.playSound(walkingSounds[random.nextInt(walkingSounds.length - 1)], "Walk");
+				lastTimeWalkSoundPlayed = System.currentTimeMillis();
+			} 
 		}
 		
 		//handle up/down movement
@@ -170,7 +166,7 @@ public class Camera {
 			moveVec.scale(speed);
 			
 			if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-				moveVec.scale(5);
+				moveVec.scale(3);
 			}
 			Vector3f.add(position, moveVec, position);
 		}
@@ -216,6 +212,21 @@ public class Camera {
 		   return false;
 		}
 		
+	}
+	
+	public static boolean allowNewWalkSound() {
+		long gap = 0;
+		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+			gap = sprintSoundGap;
+		} else {
+			gap = walkSoundGap;
+		}
+		
+		if(System.currentTimeMillis() - lastTimeWalkSoundPlayed > gap) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 
