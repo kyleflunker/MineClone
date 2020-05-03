@@ -256,7 +256,7 @@ public class WorldGeneration {
 						cacticheck = random.nextInt((cacticheckmax - cacticheckmin) +1) + cacticheckmin;
 						
 						
-						if(y == noiseHeightValue && cacticheck == 50) {
+						if(y == noiseHeightValue && cacticheck == 75) {
 							cactiSpawner.spawnCacti(x, y, z);
 						}
 					}
