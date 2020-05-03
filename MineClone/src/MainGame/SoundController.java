@@ -9,6 +9,8 @@ import javax.sound.sampled.LineListener;
 
 public class SoundController {
 	
+	public static Boolean walkPlayed = false;
+	
 	//this HashMap holds all the sounds that are currently playing in the game
 	private static HashMap<String, Clip> currentSounds = new HashMap<String, Clip>();
 	
@@ -50,13 +52,27 @@ public class SoundController {
 		} catch (Exception e) {
 			System.out.println("Error playing sound: " + soundName);
 		}
+		if(soundName == "Walk") {
+			walkPlayed = true;
+		}
 	}
 	
 	//stop a sound that's playing
 	public static void stopSound(String soundName) {
+		if (soundName == "Walk") {
+			walkPlayed = false;
+		}
 		//reference the HashMap to get the correct sound and stop it
 		currentSounds.get(soundName).stop();	
 		currentSounds.remove(soundName);
+	}
+	
+	public static Boolean soundPlaying(String soundName) {
+		if(walkPlayed == false) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

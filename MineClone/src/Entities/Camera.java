@@ -44,8 +44,14 @@ public class Camera {
 		//handle front/back movement
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			moveAt = -speed;
+			if(SoundController.soundPlaying("Walk") == true) {
+				SoundController.playLoopedSound("resources/res/gravel1.wav", "Walk");
+			}
 		}else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
 			moveAt = speed;
+			if(SoundController.soundPlaying("Walk") == true) {
+				SoundController.playLoopedSound("resources/res/gravel1.wav", "Walk");
+			}
 		} else {
 			moveAt = 0;
 		}
@@ -53,9 +59,23 @@ public class Camera {
 		//handle left/right movement
 		if (Keyboard.isKeyDown(Keyboard.KEY_D) && !Keyboard.isKeyDown(Keyboard.KEY_A)) {
 			horizMove = -speed;
+			if(SoundController.soundPlaying("Walk") == true) {
+				SoundController.playLoopedSound("resources/res/gravel1.wav", "Walk");
+			}
 		} 
 		else if (!Keyboard.isKeyDown(Keyboard.KEY_D) && Keyboard.isKeyDown(Keyboard.KEY_A)) {
 			horizMove = speed;
+			if(SoundController.soundPlaying("Walk") == true) {
+				SoundController.playLoopedSound("resources/res/gravel1.wav", "Walk");
+			}
+		}
+		
+		//check if any moving is activated
+		if (!Keyboard.isKeyDown(Keyboard.KEY_D) && !Keyboard.isKeyDown(Keyboard.KEY_A) && !Keyboard.isKeyDown(Keyboard.KEY_W) && !Keyboard.isKeyDown(Keyboard.KEY_S)) {
+			if(SoundController.soundPlaying("Walk") == true) {
+			} else {
+				SoundController.stopSound("Walk");
+			}
 		}
 		
 		//handle up/down movement
