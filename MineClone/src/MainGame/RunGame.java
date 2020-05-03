@@ -1,5 +1,6 @@
 package MainGame;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 import org.lwjgl.LWJGLException;
@@ -23,15 +24,13 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.*;
-import sun.audio.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 
 public class RunGame {
 
@@ -43,17 +42,27 @@ public class RunGame {
 	public static Noise noiseGenerator;  //noiseGenerator is defined in MainGame to be used by other classes (Camera, WorldGeneration, etc)
 	ImageIcon titleImage = new ImageIcon("resources/res/title.png");
 	ImageIcon backgroundImage = new ImageIcon("resources/res/background.png");
-	ImageIcon singlePlayer = new ImageIcon("resources/res/SinglePlayerButton.PNG");
+	ImageIcon singlePlayerButton = new ImageIcon("resources/res/SinglePlayerButton.PNG");
+	Font minecraftFont;
 
 	//open the title window only when application is started
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		new RunGame().startTitleWindow();
 	}
 
 	public void startTitleWindow() {
 		final JFrame titleWindow = new JFrame("MineClone");
 		titleWindow.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-        titleWindow.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        titleWindow.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);        
+        
+        //create the Minecraft font from resources
+        try {
+			minecraftFont = Font.createFont(Font.TRUETYPE_FONT, new File("resources/res/minecraft.ttf")).deriveFont(40f);
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	        ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("resources/res/minecraft.ttf")));
+		} catch (FontFormatException | IOException e) {
+			e.printStackTrace();
+		}     
         
         //creates listener for when user tries to exit the application window
         titleWindow.addWindowListener(new WindowAdapter() {
@@ -79,29 +88,30 @@ public class RunGame {
         backgroundImage = new ImageIcon(newimg);    
         
         JLabel seedInputLabel = new JLabel();
-        seedInputLabel.setText("Enter Seed Number:");
-        seedInputLabel.setPreferredSize(new Dimension(600,80));
-        seedInputLabel.setForeground(new Color(68, 68, 68));
-        seedInputLabel.setFont(new Font("Dialog", Font.BOLD,60));
+        seedInputLabel.setText("Enter Seed Number");
+        seedInputLabel.setPreferredSize(new Dimension(600,80));        
+        seedInputLabel.setFont(minecraftFont);
+        seedInputLabel.setForeground(Color.white);
         titleScreenPane.add(seedInputLabel);
-        titleLayout.putConstraint(SpringLayout.WEST, seedInputLabel, ((screenSize.width / 2) - 450), SpringLayout.WEST, titleScreenPane);
+        titleLayout.putConstraint(SpringLayout.WEST, seedInputLabel, ((screenSize.width / 2) - 400), SpringLayout.WEST, titleScreenPane);
         titleLayout.putConstraint(SpringLayout.NORTH, seedInputLabel, ((screenSize.height / 2) + (screenSize.height / 10)), SpringLayout.NORTH, titleScreenPane);
         
         JLabel seedLabel = new JLabel();
         seedLabel.setText("");
-        seedLabel.setPreferredSize(new Dimension(400,70));
-        seedInputLabel.setForeground(new Color(68, 68, 68));
-        seedLabel.setFont(new Font("Dialog", Font.PLAIN, 30));
+        seedLabel.setPreferredSize(new Dimension(600,70));
+        seedLabel.setForeground(Color.white);
+        seedLabel.setFont(minecraftFont);
         titleScreenPane.add(seedLabel);
-        titleLayout.putConstraint(SpringLayout.WEST, seedLabel, ((screenSize.width / 2) + 135), SpringLayout.WEST, titleScreenPane);
-        titleLayout.putConstraint(SpringLayout.NORTH, seedLabel, ((screenSize.height / 2) + (screenSize.height / 8)), SpringLayout.NORTH, titleScreenPane);   
+        titleLayout.putConstraint(SpringLayout.WEST, seedLabel, ((screenSize.width / 2) + 50), SpringLayout.WEST, titleScreenPane);
+        titleLayout.putConstraint(SpringLayout.NORTH, seedLabel, ((screenSize.height / 2) + (screenSize.height / 5)), SpringLayout.NORTH, titleScreenPane);   
         
         JTextField seedInputField = new JTextField();
-        seedInputField.setPreferredSize(new Dimension(300,80));
-        seedInputField.setFont(new Font("Dialog", Font.ITALIC, 40));
+        seedInputField.setPreferredSize(new Dimension(230,55));
+        seedInputField.setFont(minecraftFont);
+        seedInputField.setForeground(new Color(110, 110, 110));
         titleScreenPane.add(seedInputField);
-        titleLayout.putConstraint(SpringLayout.WEST, seedInputField, ((screenSize.width / 2) + 150), SpringLayout.WEST, titleScreenPane);
-        titleLayout.putConstraint(SpringLayout.NORTH, seedInputField, ((screenSize.height / 2) + (screenSize.height / 10)), SpringLayout.NORTH, titleScreenPane);        
+        titleLayout.putConstraint(SpringLayout.WEST, seedInputField, ((screenSize.width / 2) + 100), SpringLayout.WEST, titleScreenPane);
+        titleLayout.putConstraint(SpringLayout.NORTH, seedInputField, ((screenSize.height / 2) + (screenSize.height / 10) + 10), SpringLayout.NORTH, titleScreenPane);        
         
         //creates listener for when user enters something into the seed input field
         seedInputField.addKeyListener(new KeyAdapter() {
@@ -112,44 +122,45 @@ public class RunGame {
 	        			seedLabel.setText("");
 	        		} else {
 	        			seedInputField.setEditable(false);
-	        			seedLabel.setText("*Only Numerical Values*");
-	        			
+	        			seedLabel.setText("Numbers Only");
 	        		}
         		} else {
         			//if user tries to enter an integer greater than 6 places, limit it
-        			seedInputField.setText(seedInputField.getText().substring(0, 6));
+        			if (key.getKeyChar() >= '0' && key.getKeyChar() <= '9' && !(key.getKeyCode() == '-') || key.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+	        			seedInputField.setText(seedInputField.getText().substring(0, 6));
+	        			seedLabel.setText("");
+	        		} else {
+	        			seedInputField.setEditable(false);
+	        			seedLabel.setText("Numbers Only");
+	        		}
+        			
         		}
         	}
         });        
-        
-        //JButton playButton = new JButton("PLAY");
-       // playButton.setPreferredSize(new Dimension(700, 100));
-       // playButton.setFont(new Font("Dialog", Font.BOLD, 100));
-        //titleScreenPane.add(playButton);
-       // titleLayout.putConstraint(SpringLsayout.WEST, playButton, ((screenSize.width / 2) - (350)), SpringLayout.WEST, titleScreenPane);
-       // titleLayout.putConstraint(SpringLayout.NORTH, playButton, ((screenSize.height / 2) - (50) + (screenSize.height / 3)), SpringLayout.NORTH, titleScreenPane);
-        
-        JButton playButton2 = new JButton();
-        playButton2.setIcon(singlePlayer);
-        titleScreenPane.add(playButton2);
-        titleLayout.putConstraint(SpringLayout.WEST, playButton2, ((screenSize.width / 2) - (300)), SpringLayout.WEST, titleScreenPane);
-        titleLayout.putConstraint(SpringLayout.NORTH, playButton2, ((screenSize.height / 2) - (50) + (screenSize.height / 3)), SpringLayout.NORTH, titleScreenPane);
-        playButton2.setPreferredSize(new Dimension(400, 40));
+       
+        JButton playButton = new JButton();
+        playButton.setIcon(singlePlayerButton);
+        titleScreenPane.add(playButton);
+        titleLayout.putConstraint(SpringLayout.WEST, playButton, ((screenSize.width / 2) - (200)), SpringLayout.WEST, titleScreenPane);
+        titleLayout.putConstraint(SpringLayout.NORTH, playButton, ((screenSize.height / 2) - (20) + (screenSize.height / 3)), SpringLayout.NORTH, titleScreenPane);
+        playButton.setPreferredSize(new Dimension(400, 40));
         
         //creates listener for when user presses the Play button
-        playButton2.addActionListener(new ActionListener()
+        playButton.addActionListener(new ActionListener()
         {
           @Override
           public void actionPerformed(ActionEvent b) {
         	  //if player hasn't entered a seed to use, then set a random seed
+        	  SoundController.playSound("resources/res/buttonClick.wav", "button");
         	  if(seedInputField.getText().isEmpty()) {
         		  Random random = new Random();
         		  seedInteger = random.nextInt(999999);
         	  } else {
         		  seedInteger = Integer.parseInt(seedInputField.getText());
         	  }
-        	  noiseGenerator = new Noise(100, 14, 20, RunGame.getSeed());  //create the noise generator using the seed
+        	  noiseGenerator = new Noise(100, 14, 20, RunGame.getSeed());  //create the noise generator using the seed 
         	  startGameWindow();
+        	  
           }
         });
         
@@ -167,33 +178,15 @@ public class RunGame {
         
         titleWindow.setVisible(true);
         
-      //plays music
-        playMusic("resources/res/music.wav");
+        //play a sound looped continuously (until .stopSound() is called)
+        SoundController.playLoopedSound("resources/res/music.wav", "Music");
+        
+        //this is how you would play a sound once
+        //SoundController.playSound("resources/res/music.wav", "Music");
+        
+        //this is how you would stop the specific sound
+        //SoundController.stopSound("Music");
     }
-	
-	public static void playMusic(String filepath) {
-		InputStream music;
-			try {
-				music = new FileInputStream(new File(filepath));
-				AudioStream audios = new AudioStream(music);
-				AudioPlayer.player.start(audios);
-				
-			} catch (Exception e) {
-				JOptionPane.showMessageDialog(null, "Error");
-			}
-	}
-	
-	public static void stopMusic(String filepath) {
-		InputStream music;
-			try {
-				music = new FileInputStream(new File(filepath));
-				AudioStream audios = new AudioStream(music);
-				AudioPlayer.player.stop(audios);
-				
-			} catch (Exception e) {
-				JOptionPane.showMessageDialog(null, "Error");
-			}
-	}
 	
 	private void startGameWindow() {
 		glThread = new Thread(new Runnable() {
