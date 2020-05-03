@@ -108,7 +108,7 @@ public class Camera {
 
  		rotY -= Math.PI / 2;
  		
- 		//handle block pacing and destroying
+ 		//handle block placing and destroying
  		if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
 			Vector3f oldRayVec = new Vector3f(position);
 			Vector3f rayVec = new Vector3f(position);
@@ -130,7 +130,8 @@ public class Camera {
 										(int) Math.floor(x / 10f) * 10,
 										(int) Math.floor(y / 10f) * 10,
 										(int) Math.floor(z / 10f) * 10));
-								c.getChunkBlocks()[c.determineArrayPosition(x, y, z)] = null;
+								SoundController.playSound("resources/res/blockBreak.wav", "destroy");
+								c.getChunkBlocks()[c.determineArrayPosition(x, y, z)] = null;								
 								c.chooseRenderedBlocks();
 								WorldGeneration.setAdjacentChunksNeedRender(c);
 							} else {
@@ -139,6 +140,7 @@ public class Camera {
 											(int) Math.floor(ox / 10f) * 10,
 											(int) Math.floor(oy / 10f) * 10,
 											(int) Math.floor(oz / 10f) * 10));
+									SoundController.playSound("resources/res/blockPlace.wav", "build");
 									c.addToChunkBlocks(new Block(new Vector3f(ox, oy, oz), PlayerHand.getSelectedBlock()));
 									c.chooseRenderedBlocks();
 									WorldGeneration.setAdjacentChunksNeedRender(c);

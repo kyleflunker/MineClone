@@ -42,7 +42,7 @@ public class RunGame {
 	public static Noise noiseGenerator;  //noiseGenerator is defined in MainGame to be used by other classes (Camera, WorldGeneration, etc)
 	ImageIcon titleImage = new ImageIcon("resources/res/title.png");
 	ImageIcon backgroundImage = new ImageIcon("resources/res/background.png");
-	ImageIcon singlePlayerButton = new ImageIcon("resources/res/SinglePlayerButton.PNG");
+	ImageIcon singlePlayerButton = new ImageIcon("resources/res/singleplayerButton.PNG");
 	Font minecraftFont;
 
 	//open the title window only when application is started
@@ -178,14 +178,9 @@ public class RunGame {
         
         titleWindow.setVisible(true);
         
-        //play a sound looped continuously (until .stopSound() is called)
+        
         SoundController.playLoopedSound("resources/res/music.wav", "Music");
         
-        //this is how you would play a sound once
-        //SoundController.playSound("resources/res/music.wav", "Music");
-        
-        //this is how you would stop the specific sound
-        //SoundController.stopSound("Music");
     }
 	
 	private void startGameWindow() {
