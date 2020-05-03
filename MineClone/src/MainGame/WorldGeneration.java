@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.lwjgl.util.vector.Vector3f;
 
 import BlockObjects.CactiSpawner;
+import BlockObjects.JungleTreeSpawner;
 import BlockObjects.OakTreeSpawner;
 import BlockObjects.BirchTreeSpawner;
 import Entities.Camera;
@@ -28,7 +29,9 @@ public class WorldGeneration {
 	private static OakTreeSpawner oakTreeSpawner =  new OakTreeSpawner();
 	private static CactiSpawner cactiSpawner = new CactiSpawner();
 	private static BirchTreeSpawner birchTreeSpawner = new BirchTreeSpawner();
+	private static JungleTreeSpawner jungleTreeSpawner = new JungleTreeSpawner();
 	public static boolean woods = true;
+	public static boolean jungle = false;
 	static Stack<Integer> stack = new Stack<Integer>();
 	
 
@@ -184,6 +187,8 @@ public class WorldGeneration {
 		int cacticheckmin = 0;
 		int cacticheck = 0;
 		
+		int jungleTreeCheck = 0;
+		
 		
 		Chunk newChunk = new Chunk(xPos, yPos, zPos);		
 		
@@ -209,7 +214,7 @@ public class WorldGeneration {
 					Random random2 = new Random();
 					
 					// if on the top layer of the chunk and the biome is grassland
-					if(y == noiseHeightValue && woods == true) {
+					if(y == noiseHeightValue && woods == true && jungle == false) {
 						// add a grass block
 						newChunk.addToChunkBlocks(new Block(new Vector3f(x, y , z), 0));
 						//determines if a tree spawns						
@@ -230,7 +235,18 @@ public class WorldGeneration {
 								birchTreeSpawner.spawnBirchTree(x, y, z);
 							}
 						}
-				} 
+				}
+					
+					if(y == noiseHeightValue && jungle == true) {
+						
+						newChunk.addToChunkBlocks(new Block(new Vector3f(x, y, z), 0));
+						
+						jungleTreeCheck = random2.nextInt(45);
+						
+						if(jungleTreeCheck == 20 || jungleTreeCheck == 30) {
+							jungleTreeSpawner.spawnJungleTree(x, y, z);
+						}
+					}
 					
 
 					// if on the top layer of the chunk and the biome is desert
@@ -242,10 +258,6 @@ public class WorldGeneration {
 						
 						if(y == noiseHeightValue && cacticheck == 50) {
 							cactiSpawner.spawnCacti(x, y, z);
-							cacticheck = random.nextInt(50);
-							if(cacticheck== 49) {
-								woods = true;
-							}
 						}
 					}
 					
@@ -257,10 +269,16 @@ public class WorldGeneration {
 				}
 			}
 			stack.push(counter);
-			if(stack.size() == 20000) {
+			if(stack.size() == 20000 && jungle == false) {
 				woods = false;
 			}
-			if(stack.size() >= 30000) {
+			if(stack.size() >= 30000 && jungle == false) {
+				jungle = true;
+				woods = true;
+				stack.clear();
+			}
+			if(stack.size() == 30000 && jungle == true) {
+				jungle = false;
 				woods = true;
 				stack.clear();
 			}
